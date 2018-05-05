@@ -11,7 +11,7 @@ library(tidyverse)
 library(h2o)
 library(lubridate)
 library(magrittr)
-
+source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
 pathT2 <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
@@ -28,11 +28,11 @@ Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
           "AUDNZD", "CADJPY", "CHFJPY", "NZDJPY", "NZDCAD", "NZDCHF", "CADCHF")   
 
 ### Indicator values for the last 15 minutes values
-data_latest <- macd %>% head(15) %>% select(-1) %>% t() %>% as.tibble() %>% 
+data_latest <- macd %>% create_transposed_data(100) %>% head(28) %>% 
   # need to add fake category to avoid h2o prediction function errors
   mutate(LABEL = "BU") %<>% 
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)
-  mutate_at(16, as.factor) 
+  mutate_at(101, as.factor) 
 
 # initialize the virtual machine
 h2o.init(nthreads = 2)
