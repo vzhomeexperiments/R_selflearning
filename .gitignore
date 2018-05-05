@@ -24,3 +24,5 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 R_selflearning.Rproj
+CombineTrain-Trials.R
+ScoreData.R
