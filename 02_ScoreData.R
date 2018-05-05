@@ -20,7 +20,7 @@ sbx_slaveT3 <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
 sbx_slaveT4 <- "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files"
 predictor_period <- 100 #this variable will define market type period
 # load macd indicator of 28 currencies
-macd <- read_csv(file.path(pathT2, "AI_Macd1.csv"), col_names = F)
+macd <- read_csv(file.path(sbx, "AI_Macd1.csv"), col_names = F)
 
 # to be used for tests of demonstrations
 # macd <- read_rds("test_data/macd.rds")

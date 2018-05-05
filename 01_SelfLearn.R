@@ -44,8 +44,9 @@ dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %<>% mutate_at(1, as.facto
 
 #library(plotly)
 ## Visualize new matrix in 3D
-#plot_ly(z = as.matrix(dat16[,2:16]), type = "surface")
-
+#plot_ly(z = as.matrix(dat16[,2:101]), type = "surface")
+# dat17 <- dat16 %>% filter(LABEL == "BE")
+# plot_ly(z = as.matrix(dat17[,2:101]), type = "surface")
 ##########################################################################
 ## ---------- Data Modelling  ---------------
 ##########################################################################
@@ -96,7 +97,7 @@ result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict)
   summarise(Quality = sum(MATCH)/28)
 
 # save the model in case it's correctly predicting in more than 50% of the cases
-if(result$Quality > 0.5){
+if(result$Quality > 0.9){
   h2o.saveModel(ModelC, path = "model/", force = T)
 }
 
