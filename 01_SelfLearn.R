@@ -80,7 +80,7 @@ ModelC <- h2o.deeplearning(
 # get the labelled data for the test
 dat17 <- create_labelled_data(prices, 100) %>% select(LABEL) %>% head(28)
 # transform data for indicator and get the subset to predict
-dat18 <- create_transposed_data(macd, 100) %>% head(54) %>% tail(28) %>% 
+dat18 <- create_transposed_data(macd, 100) %>% head(56) %>% tail(28) %>% 
   # need to add fake category to avoid h2o prediction function errors
   mutate(LABEL = "BU") %<>% 
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)

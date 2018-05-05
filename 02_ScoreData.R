@@ -14,7 +14,11 @@ library(magrittr)
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
-pathT2 <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
+sbx <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files"
+sbx_masterT1 <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
+sbx_slaveT3 <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
+sbx_slaveT4 <- "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files"
+predictor_period <- 100 #this variable will define market type period
 # load macd indicator of 28 currencies
 macd <- read_csv(file.path(pathT2, "AI_Macd1.csv"), col_names = F)
 
@@ -28,11 +32,11 @@ Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
           "AUDNZD", "CADJPY", "CHFJPY", "NZDJPY", "NZDCAD", "NZDCHF", "CADCHF")   
 
 ### Indicator values for the last 15 minutes values
-data_latest <- macd %>% create_transposed_data(100) %>% head(28) %>% 
+data_latest <- macd %>% create_transposed_data(predictor_period) %>% head(28) %>% 
   # need to add fake category to avoid h2o prediction function errors
   mutate(LABEL = "BU") %<>% 
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)
-  mutate_at(101, as.factor) 
+  mutate_at(predictor_period+1, as.factor) 
 
 # initialize the virtual machine
 h2o.init(nthreads = 2)
@@ -58,7 +62,11 @@ for (PAIR in Pairs) {
   # name the column with pair name
   names(df) <- PAIR
   # write to the files
-  write_csv(df, file.path(pathT2, paste0("AI_M15_Direction", PAIR, ".csv")))
+  file_string <- paste0("AI_M", predictor_period, "_Direction", PAIR, ".csv")
+  write_csv(df, file.path(sbx, file_string))
+  write_csv(df, file.path(sbx_masterT1, file_string))
+  write_csv(df, file.path(sbx_slaveT3,  file_string))
+  write_csv(df, file.path(sbx_slaveT4,  file_string))
 }
 
 
