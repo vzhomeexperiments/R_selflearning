@@ -11,6 +11,7 @@ library(tidyverse)
 library(h2o)
 library(lubridate)
 library(magrittr)
+source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
@@ -18,9 +19,12 @@ sbx <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files"
 sbx_masterT1 <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
 sbx_slaveT3 <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
 sbx_slaveT4 <- "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files"
-predictor_period <- 100 #this variable will define market type period
+time_frame <- 15        #this is to define chart timeframe periodicity
+predictor_period <- 100 #this variable will define market type period (number of bars)
 # load macd indicator of 28 currencies
-macd <- read_csv(file.path(sbx, "AI_Macd1.csv"), col_names = F)
+macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
+                  trade_log_file = "AI_Macd", 
+                  time_period = time_frame)
 
 # to be used for tests of demonstrations
 # macd <- read_rds("test_data/macd.rds")
@@ -41,7 +45,7 @@ data_latest <- macd %>% create_transposed_data(predictor_period) %>% head(28) %>
 # initialize the virtual machine
 h2o.init(nthreads = 2)
 
-ModelC <- h2o.loadModel(path = "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model/DL_Classification")
+ModelC <- h2o.loadModel(path = paste0("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model/DL_Classification", time_frame))
 
 recent_ML  <- as.h2o(x = data_latest, destination_frame = "recent_ML")
 
@@ -62,7 +66,7 @@ for (PAIR in Pairs) {
   # name the column with pair name
   names(df) <- PAIR
   # write to the files
-  file_string <- paste0("AI_M", predictor_period, "_Direction", PAIR, ".csv")
+  file_string <- paste0("AI_M", time_frame, "_Direction", PAIR, ".csv")
   write_csv(df, file.path(sbx, file_string))
   write_csv(df, file.path(sbx_masterT1, file_string))
   write_csv(df, file.path(sbx_slaveT3,  file_string))

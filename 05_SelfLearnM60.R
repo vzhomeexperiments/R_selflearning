@@ -12,17 +12,20 @@ library(h2o)
 library(lubridate)
 library(magrittr)
 #library(plotly)
+source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
-pathT2 <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
-prices <- read_csv(file.path(pathT2, "AI_CP1.csv"), col_names = F)
-prices$X1 <- ymd_hms(prices$X1)
+prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
+                    trade_log_file = "AI_CP", 
+                    time_period = 60)
+
 # load macd indicator of 28 currencies
-macd <- read_csv(file.path(pathT2, "AI_Macd1.csv"), col_names = F)
-macd$X1 <- ymd_hms(macd$X1)
+macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
+                    trade_log_file = "AI_Macd", 
+                    time_period = 60)
 
 # to be used for tests of demonstrations
 # prices <- read_rds("test_data/prices.rds")
@@ -57,7 +60,7 @@ macd_ML  <- as.h2o(x = dat16, destination_frame = "macd_ML")
 
 # fit models from simplest to more complex
 ModelC <- h2o.deeplearning(
-  model_id = "DL_Classification",
+  model_id = "DL_Classification60",
   x = names(macd_ML[,2:101]), 
   y = "LABEL",
   training_frame = macd_ML,
