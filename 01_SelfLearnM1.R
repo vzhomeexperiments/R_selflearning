@@ -99,7 +99,7 @@ result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict)
   # count matches
   summarise(Quality = sum(MATCH)/28)
 
-# save the model in case it's correctly predicting in more than 50% of the cases
+# save the model in case it's correctly predicting in more than 90% of the cases
 if(result$Quality > 0.9){
   h2o.saveModel(ModelC, path = "model/", force = T)
 }

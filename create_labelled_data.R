@@ -25,8 +25,8 @@ create_labelled_data <- function(x, n = 15){
     #i <- 1
     
     if(!exists("dfr12")){
-      dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(V1>V100, "BE", "BU"))} else {
-        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(V1>V100, "BE", "BU")) %>% bind_rows(dfr12)
+      dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(1>n, "BU", "BE"))} else {
+        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(1>n, "BU", "BE")) %>% bind_rows(dfr12)
       }
     
   }
