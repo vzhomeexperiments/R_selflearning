@@ -17,13 +17,13 @@ self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe)
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 15)
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 15)
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60)
   # price_dataset <- read_rds("test_data/prices.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
   # num_bars <- 100
-  # timeframe <- 15 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # timeframe <- 60 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   
 # transform data and get the labels shift rows down
 dat14 <- create_labelled_data(price_dataset, num_bars) %>% mutate_all(funs(lag), n=28) 
