@@ -11,7 +11,7 @@
 # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 
 self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe){
-
+require(h2o)
 ### use commented code below to test this function  
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
