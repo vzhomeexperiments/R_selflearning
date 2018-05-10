@@ -13,9 +13,11 @@
 # prices$X1 <- ymd_hms(prices$X1)
 # write_rds(prices, "test_data/prices.rds")
 
-create_labelled_data <- function(x, n = 15){
+create_labelled_data <- function(x, n = 15, type = "classification"){
   #n <- 100
   #x <- read_rds(path = "test_data/prices.rds")
+  #type <- "classification"
+  #type <- "regression"
   #
   nr <- nrow(x)
   dat11 <- x %>% select(-1) %>% split(rep(1:ceiling(nr/n), each=n, length.out=nr)) #list
@@ -23,13 +25,24 @@ create_labelled_data <- function(x, n = 15){
   # operations within the list
   for (i in 1:length(dat11)) {
     #i <- 1
-    
-    if(!exists("dfr12")){
-      dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE"))} else {
-        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE")) %>% 
-          bind_rows(dfr12)
-      }
-    
+    if(type == "classification"){
+      
+        # classify by 2 classes 'BU', 'BE'
+        if(!exists("dfr12")){
+          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE"))} else {
+            dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE")) %>% 
+              bind_rows(dfr12)
+          }
+    } else if(type == "regression"){
+      # add label with numeric difference
+      if(!exists("dfr12")){
+        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = .[[1]]-.[[n]])} else {
+          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = .[[1]]-.[[n]]) %>% 
+            bind_rows(dfr12)
+        }
+      
+      
+    }
   }
   
   return(dfr12)
