@@ -14,8 +14,10 @@
 # write_rds(prices, "test_data/prices.rds")
 
 create_labelled_data <- function(x, n = 15, type = "classification"){
+  require(tidyverse)
   #n <- 100
   #x <- read_rds(path = "test_data/prices.rds")
+  #x <- read_rds("test_data/prices1.rds")
   #type <- "classification"
   #type <- "regression"
   #
@@ -34,10 +36,10 @@ create_labelled_data <- function(x, n = 15, type = "classification"){
               bind_rows(dfr12)
           }
     } else if(type == "regression"){
-      # add label with numeric difference
+      # add label with numeric difference {in pips}
       if(!exists("dfr12")){
-        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = .[[1]]-.[[n]])} else {
-          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = .[[1]]-.[[n]]) %>% 
+        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]]))} else {
+          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]])) %>% 
             bind_rows(dfr12)
         }
       
