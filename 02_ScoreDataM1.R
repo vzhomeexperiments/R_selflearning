@@ -39,6 +39,9 @@ data_latest <- macd %>% create_transposed_data(predictor_period) %>% head(28) %>
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)
   mutate_at(predictor_period+1, as.factor) 
 
+### also dataset for Regression prediction
+data_latest_R <- macd %>% create_transposed_data(predictor_period) %>% head(28) 
+
 ### Predicting the next period
 # initialize the virtual machine
 h2o.init(nthreads = 2)
@@ -48,12 +51,21 @@ ModelC <- h2o.loadModel(path = paste0("C:/Users/fxtrams/Documents/000_TradingRep
 recent_ML  <- as.h2o(x = data_latest, destination_frame = "recent_ML")
 # PREDICT the next period...
 result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame()
+
+# save for Regression model
+ModelR <- h2o.loadModel(path = paste0("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model/DL_Regression", time_frame))
+# uploading data to h2o
+recent_ML  <- as.h2o(x = data_latest_R, destination_frame = "recent_ML")
+# PREDICT the next period...
+result_R <- h2o.predict(ModelR, recent_ML) %>% as.data.frame()
+
 # shutdown h2o
 h2o.shutdown(prompt = F)
 
 ### Applying prediction by writing files
 # Rename the rownames
 rownames(result) <- Pairs
+rownames(result_R) <- Pairs
 
 # test for all columns
 for (PAIR in Pairs) {
@@ -64,6 +76,21 @@ for (PAIR in Pairs) {
   names(df) <- PAIR
   # write to the files
   file_string <- paste0("AI_M", time_frame, "_Direction", PAIR, ".csv")
+  write_csv(df, file.path(sbx, file_string))
+  write_csv(df, file.path(sbx_masterT1, file_string))
+  write_csv(df, file.path(sbx_slaveT3,  file_string))
+  write_csv(df, file.path(sbx_slaveT4,  file_string))
+}
+
+# same for regression (writing predicted price change to the file)
+for (PAIR in Pairs) {
+  # PAIR <- "EURUSD"
+  # filter by row and select prediction
+  df <- result_R %>% filter(row.names(result) %in% PAIR) %>% select(predict)
+  # name the column with pair name
+  names(df) <- PAIR
+  # write to the files
+  file_string <- paste0("AI_M", time_frame, "_Change", PAIR, ".csv")
   write_csv(df, file.path(sbx, file_string))
   write_csv(df, file.path(sbx_masterT1, file_string))
   write_csv(df, file.path(sbx_slaveT3,  file_string))
