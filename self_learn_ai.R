@@ -11,7 +11,8 @@
 # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 
 self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe){
-require(h2o)
+  require(h2o)
+  require(tidyverse)
 ### use commented code below to test this function  
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
@@ -58,7 +59,7 @@ ModelC <- h2o.deeplearning(
   distribution = "AUTO",
   stopping_metric = "AUTO",
   balance_classes = F,
-  epochs = 200)
+  epochs = 100)
 
 #ModelC
 #summary(ModelC)
@@ -99,6 +100,7 @@ h2o.shutdown(prompt = FALSE)
 # function to handle regression
 self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe){
   require(h2o)
+  require(tidyverse)
   ### use commented code below to test this function  
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
@@ -145,7 +147,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     distribution = "AUTO",
     stopping_metric = "AUTO",
     #balance_classes = F,
-    epochs = 200)
+    epochs = 100)
   
   #ModelC
   #summary(ModelC)
