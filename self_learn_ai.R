@@ -16,6 +16,17 @@
 # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
 
+#' Title
+#'
+#' @param price_dataset 
+#' @param indicator_dataset 
+#' @param num_bars 
+#' @param timeframe 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe){
   require(h2o)
   require(tidyverse)

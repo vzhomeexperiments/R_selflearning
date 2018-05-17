@@ -13,6 +13,19 @@
 # prices$X1 <- ymd_hms(prices$X1)
 # write_rds(prices, "test_data/prices.rds")
 
+#' Create labelled data
+#'
+#' @param x - data set containing a table where 1st column is a Time index and other columns containing financial asset price values
+#' @param n - number of rows we intend to split and transpose the data 
+#' @param type - type of the label required. Can be either "classification" or "regression". "classification" will return either "BU" or "BE",
+#' "regression" will return the difference between first value and the last value in each row
+#'
+#' @return function returns transposed data. One column called 'LABEL' indicate achieved value of the label.
+#' Transposed values from every column are stacked one to each other
+#' 
+#' @export
+#'
+#' @examples
 create_labelled_data <- function(x, n = 15, type = "classification"){
   require(tidyverse)
   #n <- 100

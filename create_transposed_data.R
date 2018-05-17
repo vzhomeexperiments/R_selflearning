@@ -13,7 +13,18 @@
 # macd$X1 <- ymd_hms(macd$X1)
 # write_rds(macd, "test_data/macd.rds")
 
+#' Create Transposed Data
+#'
+#' @param x - data set containing a table where 1st column is a Time index and other columns containing financial asset indicator values
+#' @param n - number of rows we intend to split and transpose the data 
+#'
+#' @return function returns transposed data. Transposed values from every column are stacked one to each other
+#' @export
+#'
+#' @examples
+#' 
 create_transposed_data <- function(x, n = 15){
+  require(tidyverse)
   #n <- 15
   #x <- read_rds("test_data/macd.rds") 
   nr <- nrow(x)

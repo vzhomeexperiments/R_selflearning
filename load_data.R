@@ -3,12 +3,27 @@
 # -------------------------
 # Import Data to R
 # -------------------------
-# Function imports file and change data column type
-# Function return the dataframe with trade data
-
+#' Load Data Function
+#' 
+#' Function imports file and change date column type. Function return the dataframe with trade data
+#'
+#' @param path_terminal - path to the MT4 terminal, string
+#' @param trade_log_file - csv file name where the data is stored, without ".csv"
+#' @param time_period - data periodicity in minutes, can be 1, 15, 60
+#'
+#' @return - dataframe with asset data in columns where X1 column is in a POSIXct format
+#' @export
+#'
+#' @examples  
+#' prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
+#'                     trade_log_file = "AI_CP", 
+#'                     time_period = 1)
+#' 
 load_data <- function(path_terminal, trade_log_file, time_period = 1){
   # path_terminal <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
+  # path_terminal <- file.path(getwd(), "test_data")
   # trade_log_file <- "AI_CP"
+  # trade_log_file <- "AI_Macd"
   # time_period <- 1
   require(tidyverse)
   require(lubridate)
@@ -36,3 +51,24 @@ load_data <- function(path_terminal, trade_log_file, time_period = 1){
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
