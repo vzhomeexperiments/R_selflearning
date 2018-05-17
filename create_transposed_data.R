@@ -23,9 +23,9 @@
 #'
 #' @examples
 #' 
-create_transposed_data <- function(x, n = 15){
+create_transposed_data <- function(x, n = 50){
   require(tidyverse)
-  #n <- 15
+  #n <- 50
   #x <- read_rds("test_data/macd.rds") 
   nr <- nrow(x)
   dat11 <- x %>% select(-1) %>% split(rep(1:ceiling(nr/n), each=n, length.out=nr)) #list
@@ -44,3 +44,31 @@ create_transposed_data <- function(x, n = 15){
   return(dfr12)
   
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
