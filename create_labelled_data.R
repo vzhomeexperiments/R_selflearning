@@ -26,11 +26,10 @@
 #' @export
 #'
 #' @examples
-create_labelled_data <- function(x, n = 15, type = "classification"){
+create_labelled_data <- function(x, n = 50, type = "classification"){
   require(tidyverse)
-  #n <- 100
-  #x <- read_rds(path = "test_data/prices.rds")
-  #x <- read_rds("test_data/prices1.rds")
+  #n <- 50
+  #x <- read_rds(path = "test_data/prices1.rds")
   #type <- "classification"
   #type <- "regression"
   #
