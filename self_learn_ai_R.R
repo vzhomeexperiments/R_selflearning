@@ -1,7 +1,5 @@
-
-
-# function to handle regression
-#' Title
+# 
+#' Function to handle regression
 #'
 #' @param price_dataset 
 #' @param indicator_dataset 
@@ -23,10 +21,10 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
   # # load macd indicator of 28 currencies
   # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60)
-  # price_dataset <- read_rds("test_data/prices.rds")
+  # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
   # num_bars <- 100
-  # timeframe <- 15 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   
   # transform data and get the labels shift rows down
   dat14 <- create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) 
