@@ -36,13 +36,13 @@ self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe)
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 1)
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60)
-  # price_dataset <- read_rds("test_data/prices.rds")
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1)
+  # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
   # num_bars <- 100
-  # timeframe <- 60 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   
 # transform data and get the labels shift rows down
 dat14 <- create_labelled_data(price_dataset, num_bars) %>% mutate_all(funs(lag), n=28) 
@@ -50,6 +50,10 @@ dat14 <- create_labelled_data(price_dataset, num_bars) %>% mutate_all(funs(lag),
 dat15 <- create_transposed_data(indicator_dataset, num_bars) 
 # dataframe for the DL modelling it contains all 
 dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% filter_all(any_vars(. != 0))%>% na.omit() %<>% mutate_at(1, as.factor) 
+# split data to train and test blocks
+test_ind <- 1:round(0.3*(nrow(dat16)))
+dat21 <- dat16[test_ind, ]
+dat22 <- dat16[-test_ind,]
 
 #library(plotly)
 ## Visualize new matrix in 3D
@@ -59,7 +63,7 @@ dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% filter_all(any_vars(. 
 h2o.init()
 
 # load data into h2o environment
-macd_ML  <- as.h2o(x = dat16, destination_frame = "macd_ML")
+macd_ML  <- as.h2o(x = dat22, destination_frame = "macd_ML")
   
 # fit models from simplest to more complex
 ModelC <- h2o.deeplearning(
@@ -70,7 +74,7 @@ ModelC <- h2o.deeplearning(
   activation = "Tanh",
   overwrite_with_best_model = TRUE, 
   autoencoder = FALSE, 
-  hidden = c(100,100), 
+  hidden = c(80,50,30,15,5), 
   loss = "Automatic",
   sparse = TRUE,
   l1 = 1e-4,
@@ -82,6 +86,10 @@ ModelC <- h2o.deeplearning(
 #ModelC
 #summary(ModelC)
 #h2o.performance(ModelC)
+## save model object for future reference
+#h2o.saveModel(ModelC, path = "test_data/model/", force = T)
+#write_rds(dat22, "test_data/model/train_Classif.rds")
+#write_rds(dat21, "test_data/model/test_Classif.rds")
 
 ## Checking how the model predict using the latest dataset
 # get the labelled data for the test

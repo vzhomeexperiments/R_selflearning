@@ -68,6 +68,10 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   #ModelC
   #summary(ModelC)
   #h2o.performance(ModelC)
+  ## save model object for future reference
+  #h2o.saveModel(ModelC, path = "test_data/model/", force = T)
+  #write_rds(dat22, "test_data/model/train_Regr.rds")
+  #write_rds(dat21, "test_data/model/test_Regr.rds")
   
   ## Checking how the model predict using the latest dataset
   # upload recent dataset to predict
