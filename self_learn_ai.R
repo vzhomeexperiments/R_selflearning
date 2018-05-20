@@ -27,7 +27,7 @@
 #' @export
 #'
 #' @examples
-self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe){
+self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE){
   require(h2o)
   require(tidyverse)
   require(magrittr)
@@ -41,11 +41,13 @@ self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe)
   # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1)
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
-  # num_bars <- 100
+  # num_bars <- 75
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   
 # transform data and get the labels shift rows down
-dat14 <- create_labelled_data(price_dataset, num_bars) %>% mutate_all(funs(lag), n=28) 
+dat51 <-  create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) %>% na.omit() %>% 
+  select(LABEL)#will be used for testing the strategy
+dat14 <- create_labelled_data(price_dataset, num_bars, type = "classification") %>% mutate_all(funs(lag), n=28) 
 # transform data for indicator
 dat15 <- create_transposed_data(indicator_dataset, num_bars) 
 # dataframe for the DL modelling it contains all 
@@ -54,7 +56,7 @@ dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% filter_all(any_vars(. 
 test_ind <- 1:round(0.3*(nrow(dat16)))
 dat21 <- dat16[test_ind, ]
 dat22 <- dat16[-test_ind,]
-
+dat52 <- dat51[test_ind, ]
 #library(plotly)
 ## Visualize new matrix in 3D
 #plot_ly(z = as.matrix(dat16[,2:101]), type = "surface")
@@ -67,7 +69,7 @@ macd_ML  <- as.h2o(x = dat22, destination_frame = "macd_ML")
   
 # fit models from simplest to more complex
 ModelC <- h2o.deeplearning(
-  model_id = paste0("DL_Classification", timeframe),
+  model_id = paste0("DL_Classification",  num_bars, "-", timeframe),
   x = names(macd_ML[,2:num_bars+1]), 
   y = "LABEL",
   training_frame = macd_ML,
@@ -91,29 +93,48 @@ ModelC <- h2o.deeplearning(
 #write_rds(dat22, "test_data/model/train_Classif.rds")
 #write_rds(dat21, "test_data/model/test_Classif.rds")
 
-## Checking how the model predict using the latest dataset
-# get the labelled data for the test
-dat17 <- create_labelled_data(price_dataset, num_bars) %>% select(LABEL) %>% head(28)
-# transform data for indicator and get the subset to predict
-dat18 <- create_transposed_data(indicator_dataset, num_bars) %>% head(56) %>% tail(28) %>% 
-  # need to add fake category to avoid h2o prediction function errors
-  mutate(LABEL = "BU") %<>% 
+
+### Testing this Model <TDL>
+
+dat41 <- dat21 %>%  mutate(LABEL = "BU") %<>% 
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)
-  mutate_at(num_bars+1, as.factor) 
+  mutate_at(1, as.factor) 
+
 
 # upload recent dataset to predict
-recent_ML  <- as.h2o(x = dat18, destination_frame = "recent_ML")
+recent_ML  <- as.h2o(x = dat41, destination_frame = "recent_ML")
 # use model to 
-result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict) %>% bind_cols(dat17) %>% 
-  # compare predicted vs real
-  mutate(MATCH = ifelse(predict==LABEL, 1, 0)) %>% 
-  # count matches
-  summarise(Quality = sum(MATCH)/28)
-
-# save the model in case it's correctly predicting in more than 90% of the cases for the very last observation
-if(result$Quality > 0.9){
+result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict) %>% bind_cols(dat41, dat52) %>% 
+  select(predict, LABEL1) %>% 
+  # generate column of estimated risk trusting the model
+  mutate(RiskEst = if_else(predict == "BU", 1, -1)) %>%
+  # generate colmn of 'known' direction
+  mutate(RiskKnown = if_else(LABEL1 > 0, 1, if_else(LABEL1 < 0, -1, 0))) %>% 
+  # calculate expected outcome of risking the 'RiskEst'
+  mutate(AchievedGain = RiskEst*LABEL1) %>% 
+  # calculate 'real' gain or loss
+  mutate(ExpectedGain = RiskKnown*LABEL1) %>% 
+  # get the sum of both columns
+  summarise(ExpectedPnL = sum(ExpectedGain),
+            AchievedPnL = sum(AchievedGain)) %>% 
+  # interpret the results
+  mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
+         FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+  
+  
+# write the final object dat31 to the file for debugging or research
+if(research_mode == TRUE){
+  # In research mode we will write results to the new folder
+  write_rds(result, paste0("RESEARCH/", Sys.Date(), "-ResultC-", num_bars, "-", timeframe, ".rds"))
   h2o.saveModel(ModelC, path = "model/", force = T)
 }
+
+
+# save the model in case it's good and Achieved is not much less than Expected!
+if(research_mode == FALSE && result$FinalOutcome == "VeryGood" && result$FinalQuality > 0.6){
+  h2o.saveModel(ModelC, path = "model/", force = T)
+}
+
 
 #h2o.shutdown(prompt = FALSE)
 
