@@ -6,6 +6,7 @@
 #' @param indicator_dataset 
 #' @param num_bars 
 #' @param timeframe 
+#' @param research_mode
 #'
 #' @return
 #' @export
@@ -14,17 +15,18 @@
 self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE){
   require(h2o)
   require(tidyverse)
+  require(openssl)
   ### use commented code below to test this function  
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 1)
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60)
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1)
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
-  # num_bars <- 100
+  # num_bars <- 90
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   
   # transform data and get the labels shift rows down
@@ -50,7 +52,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   
   # fit models from simplest to more complex
   ModelC <- h2o.deeplearning(
-    model_id = paste0("DL_Regression", timeframe),
+    model_id = paste0("DL_Regression", num_bars, "-", timeframe),
     x = names(macd_ML[,2:num_bars+1]), 
     y = "LABEL",
     training_frame = macd_ML,
@@ -104,17 +106,17 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
            FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
   
-  # write the final object dat31 to the file for debugging or even for production
+  # write the final object dat31 to the file for debugging or research
   if(research_mode == TRUE){
-    # generate unique hash to be added to the object
-    require(openssl)
-    hash <- Sys.Date() %>% as.character.POSIXt() %>% sha1()
-    write_rds(dat31, paste0("RESEARCH/", hash, "-Result-", num_bars, "-", timeframe, ".rds"))}
-  
-  
-  # save the model in case it's good and Achieved is not much less than Expected!
-  if(dat31$FinalOutcome == "VeryGood" && dat31$FinalQuality > 0.5){
+    # In research mode we will write results to the new folder
+    write_rds(dat31, paste0("RESEARCH/", Sys.Date(), "-Result-", num_bars, "-", timeframe, ".rds"))
     h2o.saveModel(ModelC, path = "model/", force = T)
+    }
+  
+
+  # save the model in case it's good and Achieved is not much less than Expected!
+  if(research_mode == FALSE && dat31$FinalOutcome == "VeryGood" && dat31$FinalQuality > 0.8){
+  h2o.saveModel(ModelC, path = "model/", force = T)
   }
   
   #h2o.shutdown(prompt = FALSE)

@@ -30,6 +30,7 @@ create_transposed_data <- function(x, n = 50){
   #x <- read_rds("test_data/macd.rds") 
   nr <- nrow(x)
   dat11 <- x %>% select(-1) %>% split(rep(1:ceiling(nr/n), each=n, length.out=nr)) #list
+  dat11[length(dat11)] <- NULL
   
   # operations within the list
   for (i in 1:length(dat11)) {

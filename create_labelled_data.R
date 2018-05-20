@@ -29,13 +29,16 @@
 #' @examples
 create_labelled_data <- function(x, n = 50, type = "classification"){
   require(tidyverse)
-  #n <- 50
+  #n <- 90
+  #
   #x <- read_rds(path = "test_data/prices1.rds")
   #type <- "classification"
   #type <- "regression"
   #
   nr <- nrow(x)
   dat11 <- x %>% select(-1) %>% split(rep(1:ceiling(nr/n), each=n, length.out=nr)) #list
+  # remove last element of the list
+  dat11[length(dat11)] <- NULL
   
   # operations within the list
   for (i in 1:length(dat11)) {
@@ -44,15 +47,15 @@ create_labelled_data <- function(x, n = 50, type = "classification"){
       
         # classify by 2 classes 'BU', 'BE'
         if(!exists("dfr12")){
-          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE"))} else {
-            dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE")) %>% 
+          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as_tibble() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE"))} else {
+            dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as_tibble() %>% mutate(LABEL = ifelse(.[[1]]>.[[n]], "BU", "BE")) %>% 
               bind_rows(dfr12)
           }
     } else if(type == "regression"){
       # add label with numeric difference {in pips}
       if(!exists("dfr12")){
-        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.data.frame() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]]))} else {
-          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as.tibble() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]])) %>% 
+        dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as_tibble() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]]))} else {
+          dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as_tibble() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]])) %>% 
             bind_rows(dfr12)
         }
       
