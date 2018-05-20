@@ -14,6 +14,7 @@
 # write_rds(prices, "test_data/prices.rds")
 
 #' Create labelled data
+#' https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 #'
 #' @param x - data set containing a table where 1st column is a Time index and other columns containing financial asset price values
 #' @param n - number of rows we intend to split and transpose the data 

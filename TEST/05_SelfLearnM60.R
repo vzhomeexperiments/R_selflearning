@@ -16,7 +16,7 @@ source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai.R")
-
+source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai_R.R")
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
 prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
@@ -32,6 +32,7 @@ macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4
 # prices <- read_rds("test_data/prices.rds")
 # macd <- read_rds("test_data/macd.rds")
 
+h2o.init()
 # performing Deep Learning classification using the custom function
 self_learn_ai(price_dataset = prices,
               indicator_dataset = macd,
@@ -43,4 +44,6 @@ self_learn_ai_R(price_dataset = prices,
                 indicator_dataset = macd,
                 num_bars = 100,
                 timeframe = 60)
+
+h2o.shutdown(prompt = F)
 #### End

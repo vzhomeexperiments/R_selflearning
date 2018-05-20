@@ -60,7 +60,7 @@ dat22 <- dat16[-test_ind,]
 #plot_ly(z = as.matrix(dat16[,2:101]), type = "surface")
 
 ## ---------- Data Modelling  ---------------
-h2o.init()
+#h2o.init()
 
 # load data into h2o environment
 macd_ML  <- as.h2o(x = dat22, destination_frame = "macd_ML")
@@ -115,7 +115,7 @@ if(result$Quality > 0.9){
   h2o.saveModel(ModelC, path = "model/", force = T)
 }
 
-h2o.shutdown(prompt = FALSE)
+#h2o.shutdown(prompt = FALSE)
 
 
 

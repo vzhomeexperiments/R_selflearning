@@ -1,6 +1,7 @@
 # 
 #' Function to handle regression
-#'
+#' https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
+#' 
 #' @param price_dataset 
 #' @param indicator_dataset 
 #' @param num_bars 
@@ -10,7 +11,7 @@
 #' @export
 #'
 #' @examples
-self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe){
+self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE){
   require(h2o)
   require(tidyverse)
   ### use commented code below to test this function  
@@ -42,7 +43,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   #plot_ly(z = as.matrix(dat16[,2:101]), type = "surface")
   
   ## ---------- Data Modelling  ---------------
-  h2o.init()
+  #h2o.init()
   
   # load data into h2o environment
   macd_ML  <- as.h2o(x = dat22, destination_frame = "macd_ML")
@@ -73,23 +74,29 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   #write_rds(dat22, "test_data/model/train_Regr.rds")
   #write_rds(dat21, "test_data/model/test_Regr.rds")
   
+  ## 
+  # **** 
+  ##
+  
+  # bringing test data
+  # dat21 <- read_rds("test_data/model/test_Regr.rds")
+  # ModelC <- h2o.loadModel("test_data/model/DL_Regression1")
+  
   ## Checking how the model predict using the latest dataset
   # upload recent dataset to predict
   recent_ML  <- as.h2o(x = dat21[,-1], destination_frame = "recent_ML")
   # use model to predict
-  result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict)
+  result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict) %>% round()
   
   ## evaluate hypothetical results of trading using the model
   # join real values with predicted values
   dat31 <- dat21 %>% select(LABEL) %>% bind_cols(result) %>% 
     # add column risk that has +1 if buy trade and -1 if sell trade
-    mutate(Risk = if_else(predict > 0, 1, -1)) %>% 
+    mutate(Risk = if_else(predict > 0, 1, if_else(predict == 0, 0, -1))) %>% 
     # calculate expected outcome of risking the 'Risk'
     mutate(ExpectedGain = predict*Risk) %>% 
     # calculate 'real' gain or loss
     mutate(AchievedGain = LABEL*Risk) %>% 
-    ## uncomment to visualize
-    #ggplot(aes(ExpectedGain, AchievedGain))+geom_point()
     # get the sum of both columns
     summarise(ExpectedPnL = sum(ExpectedGain),
               AchievedPnL = sum(AchievedGain)) %>% 
@@ -97,12 +104,21 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
            FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
   
+  # write the final object dat31 to the file for debugging or even for production
+  if(research_mode == TRUE){
+    # generate unique hash to be added to the object
+    require(openssl)
+    hash <- Sys.Date() %>% as.character.POSIXt() %>% sha1()
+    write_rds(dat31, paste0("RESEARCH/", hash, "-Result-", num_bars, "-", timeframe, ".rds"))}
+  
+  
   # save the model in case it's good and Achieved is not much less than Expected!
-  if(dat31$FinalOutcome == "VeryGood" && FinalQuality > 0.5){
+  if(dat31$FinalOutcome == "VeryGood" && dat31$FinalQuality > 0.5){
     h2o.saveModel(ModelC, path = "model/", force = T)
   }
   
-  h2o.shutdown(prompt = FALSE)
+  #h2o.shutdown(prompt = FALSE)
+  
   
   
   

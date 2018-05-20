@@ -4,6 +4,7 @@
 # Import Data to R
 # -------------------------
 #' Load Data Function
+#' https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 #' 
 #' Function imports file and change date column type. Function return the dataframe with trade data
 #'
