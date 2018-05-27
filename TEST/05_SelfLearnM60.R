@@ -17,6 +17,10 @@ source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelle
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai_R.R")
+
+#absolute path to store model objects (useful when scheduling tasks)
+path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
+
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
 prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
@@ -37,13 +41,15 @@ h2o.init()
 self_learn_ai(price_dataset = prices,
               indicator_dataset = macd,
               num_bars = 100,
-              timeframe = 60)
+              timeframe = 60,
+              path_model = path_model)
 
 # performing Deep Learning Regression using the custom function
 self_learn_ai_R(price_dataset = prices,
                 indicator_dataset = macd,
                 num_bars = 100,
-                timeframe = 60)
+                timeframe = 60,
+                path_model = path_model)
 
 h2o.shutdown(prompt = F)
 #### End

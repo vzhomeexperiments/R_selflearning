@@ -7,15 +7,15 @@
 #' @param num_bars 
 #' @param timeframe 
 #' @param research_mode
+#' @param path_model
 #'
 #' @return
 #' @export
 #'
 #' @examples
-self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE){
+self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE, path_model){
   require(h2o)
   require(tidyverse)
-  require(openssl)
   ### use commented code below to test this function  
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
@@ -26,8 +26,9 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1)
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
-  # num_bars <- 90
+  # num_bars <- 75
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   
   # transform data and get the labels shift rows down
   dat14 <- create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) 
@@ -110,13 +111,13 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   if(research_mode == TRUE){
     # In research mode we will write results to the new folder
     write_rds(dat31, paste0("RESEARCH/", Sys.Date(), "-Result-", num_bars, "-", timeframe, ".rds"))
-    h2o.saveModel(ModelC, path = "model/", force = T)
+    h2o.saveModel(ModelC, path = path_model, force = T)
     }
   
 
   # save the model in case it's good and Achieved is not much less than Expected!
   if(research_mode == FALSE && dat31$FinalOutcome == "VeryGood" && dat31$FinalQuality > 0.8){
-  h2o.saveModel(ModelC, path = "model/", force = T)
+  h2o.saveModel(ModelC, path = path_model, force = T)
   }
   
   #h2o.shutdown(prompt = FALSE)

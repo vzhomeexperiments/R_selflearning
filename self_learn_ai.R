@@ -22,12 +22,13 @@
 #' @param indicator_dataset 
 #' @param num_bars 
 #' @param timeframe 
+#' @param path_model
 #'
 #' @return
 #' @export
 #'
 #' @examples
-self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE){
+self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE,path_model){
   require(h2o)
   require(tidyverse)
   require(magrittr)
@@ -43,6 +44,7 @@ self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe,
   # indicator_dataset <- read_rds("test_data/macd.rds")
   # num_bars <- 75
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   
 # transform data and get the labels shift rows down
 dat51 <-  create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) %>% na.omit() %>% 
@@ -126,13 +128,13 @@ result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict)
 if(research_mode == TRUE){
   # In research mode we will write results to the new folder
   write_rds(result, paste0("RESEARCH/", Sys.Date(), "-ResultC-", num_bars, "-", timeframe, ".rds"))
-  h2o.saveModel(ModelC, path = "model/", force = T)
+  h2o.saveModel(ModelC, path = path_model, force = T)
 }
 
 
 # save the model in case it's good and Achieved is not much less than Expected!
 if(research_mode == FALSE && result$FinalOutcome == "VeryGood" && result$FinalQuality > 0.6){
-  h2o.saveModel(ModelC, path = "model/", force = T)
+  h2o.saveModel(ModelC, path = path_model, force = T)
 }
 
 
