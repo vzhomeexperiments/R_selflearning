@@ -19,6 +19,7 @@ sbx <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files"
 sbx_masterT1 <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
 sbx_slaveT3 <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
 sbx_slaveT4 <- "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files"
+sbx_slaveT5 <- "C:/Program Files (x86)/FxPro - Terminal5/MQL4/Files"
 time_frame <- 60         #this is to define chart timeframe periodicity
 predictor_period <- 100  #this variable will define market type period (number of bars)
 # load macd indicator of 28 currencies, use for demo: macd <- read_rds("test_data/macd.rds")
@@ -82,6 +83,7 @@ for (PAIR in Pairs) {
   write_csv(df, file.path(sbx_masterT1, file_string))
   write_csv(df, file.path(sbx_slaveT3,  file_string))
   write_csv(df, file.path(sbx_slaveT4,  file_string))
+  write_csv(df, file.path(sbx_slaveT5,  file_string))
 }
 
 # same for regression (writing predicted price change to the file)
@@ -97,6 +99,7 @@ for (PAIR in Pairs) {
   write_csv(df, file.path(sbx_masterT1, file_string))
   write_csv(df, file.path(sbx_slaveT3,  file_string))
   write_csv(df, file.path(sbx_slaveT4,  file_string))
+  write_csv(df, file.path(sbx_slaveT5,  file_string))
 }
 
 # outcome is series of files written to the sandboxes of each terminals
