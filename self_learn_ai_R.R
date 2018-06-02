@@ -2,18 +2,30 @@
 #' Function to handle regression
 #' https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 #' 
+#' Self-learning function. Function will use price and indicator datasets. Goal of the function is to create deep learning
+#' model trained to predict future state of the label. Function will also check how the model predict by using trading 
+#' objective.
+#' 
+#' Because of the function is intended to periodically re-train the model it would always check how the previous model was working.
+#' In case new model is better, the better model will be used.
+#' NOTE: Always run parameter research_mode = TRUE for the first time
+#' 
+#' Function can also write a log files with a results of the strategy test
+#' 
 #' @param price_dataset 
 #' @param indicator_dataset 
 #' @param num_bars 
 #' @param timeframe 
 #' @param research_mode
 #' @param path_model
+#' @param write_log Writes results of the newly trained model and previously used model to the file
 #'
 #' @return
 #' @export
 #'
 #' @examples
-self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE, path_model){
+self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE, path_model,
+                            write_log = TRUE){
   require(h2o)
   require(tidyverse)
   ### use commented code below to test this function  
@@ -29,6 +41,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # num_bars <- 75
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
+  # write_log = TRUE
   
   # transform data and get the labels shift rows down
   dat14 <- create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) 
@@ -67,7 +80,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     distribution = "AUTO",
     stopping_metric = "MSE",
     #balance_classes = F,
-    epochs = 100)
+    epochs = 300)
   
   #ModelC
   #summary(ModelC)
@@ -106,6 +119,36 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     # interpret the results
     mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
            FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+
+## ------ //added after 1st week of testing// -------------  
+### Test existing model with new data to compare both results and keep the better model for production
+  # check existence of the model trained previously and if exist, load it and test strategy using it
+  ModelC_prev <- try(h2o.loadModel(paste0(path_model, "/DL_Regression",
+                                      num_bars, "-", timeframe)),silent = T)
+  if(!class(ModelC_prev)=='try-error'){
+    # result prev
+    result_prev <- h2o.predict(ModelC_prev, recent_ML) %>% as.data.frame() %>% select(predict) %>% round()
+      
+    ## evaluate hypothetical results of trading using the model
+    # join real values with predicted values
+    dat31_prev <- dat21 %>% select(LABEL) %>% bind_cols(result_prev) %>% 
+      # add column risk that has +1 if buy trade and -1 if sell trade
+      mutate(Risk = if_else(predict > 0, 1, if_else(predict == 0, 0, -1))) %>% 
+      # calculate expected outcome of risking the 'Risk'
+      mutate(ExpectedGain = predict*Risk) %>% 
+      # calculate 'real' gain or loss
+      mutate(AchievedGain = LABEL*Risk) %>% 
+      # get the sum of both columns
+      summarise(ExpectedPnL = sum(ExpectedGain),
+                AchievedPnL = sum(AchievedGain)) %>% 
+      # interpret the results
+      mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
+             FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+    
+    
+    
+    
+  }
   
   # write the final object dat31 to the file for debugging or research
   if(research_mode == TRUE){
@@ -116,8 +159,22 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   
 
   # save the model in case it's good and Achieved is not much less than Expected!
-  if(research_mode == FALSE && dat31$FinalOutcome == "VeryGood" && dat31$FinalQuality > 0.8){
+  if(research_mode == FALSE && dat31$FinalOutcome == "VeryGood" && 
+     #condition OR will also overwrite the model in case previously made model is performing worse than the new one
+     (dat31$FinalQuality > 0.8 || dat31$FinalQuality > dat31_prev$FinalQuality)){
   h2o.saveModel(ModelC, path = path_model, force = T)
+  }
+  
+  
+  # write logs if enabled
+  if(write_log == TRUE){
+    # create folder where to save if not exists
+    path_LOG <- paste0(path_model, "/LOG/")
+    if(!dir.exists(path_LOG)){dir.create(path_LOG)}
+    # write combined data to the file named with current date
+    
+    
+    
   }
   
   #h2o.shutdown(prompt = FALSE)

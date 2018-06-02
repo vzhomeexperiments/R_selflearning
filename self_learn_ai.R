@@ -16,7 +16,15 @@
 # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
 
-#' Title
+#' Self-learning function. Function will use price and indicator datasets. Goal of the function is to create deep learning
+#' model trained to predict future state of the label. Function will also check how the model predict by using trading 
+#' objective.
+#' 
+#' Because of the function is intended to periodically re-train the model it would always check how the previous model was working.
+#' In case new model is better, the better model will be used.
+#' NOTE: Always run parameter research_mode = TRUE for the first time
+#' 
+#' Function can also write a log files with a results of the strategy test
 #'
 #' @param price_dataset 
 #' @param indicator_dataset 
@@ -130,7 +138,7 @@ if(research_mode == TRUE){
   write_rds(result, paste0("RESEARCH/", Sys.Date(), "-ResultC-", num_bars, "-", timeframe, ".rds"))
   h2o.saveModel(ModelC, path = path_model, force = T)
 }
-
+## ------ //added after 1st week of testing// -------------
 ### Test existing model with new data to compare both results and keep the better model for production
 # load model
 ModelC_prev <- h2o.loadModel(paste0(path_model, "/DL_Classification",
