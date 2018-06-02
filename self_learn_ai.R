@@ -31,12 +31,14 @@
 #' @param num_bars 
 #' @param timeframe 
 #' @param path_model
+#' @param write_log
 #'
 #' @return
 #' @export
 #'
 #' @examples
-self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE,path_model){
+self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe, research_mode = FALSE,path_model,
+                          write_log = TRUE){
   require(h2o)
   require(tidyverse)
   require(magrittr)
@@ -53,6 +55,7 @@ self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe,
   # num_bars <- 75
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
+  # write_log == TRUE
   
 # transform data and get the labels shift rows down
 dat51 <-  create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) %>% na.omit() %>% 
@@ -104,7 +107,7 @@ ModelC <- h2o.deeplearning(
 #write_rds(dat21, "test_data/model/test_Classif.rds")
 
 
-### Testing this Model <TDL>
+### Testing this Model 
 
 dat41 <- dat21 %>%  mutate(LABEL = "BU") %<>% 
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)
@@ -132,36 +135,40 @@ result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict)
          FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
   
   
+
+## ------ //added after 1st week of testing// -------------
+### Test existing model with new data to compare both results and keep the better model for production
+# load model
+ModelC_prev <- try(h2o.loadModel(paste0(path_model, "/DL_Classification",
+                                    num_bars, "-", timeframe)),silent = TRUE)
+
+if(!class(ModelC_prev)=='try-error'){
+
+  # result prev
+  result_prev <- h2o.predict(ModelC_prev, recent_ML) %>% as.data.frame() %>% select(predict) %>% bind_cols(dat41, dat52) %>% 
+    select(predict, LABEL1) %>% 
+    # generate column of estimated risk trusting the model
+    mutate(RiskEst = if_else(predict == "BU", 1, -1)) %>%
+    # generate colmn of 'known' direction
+    mutate(RiskKnown = if_else(LABEL1 > 0, 1, if_else(LABEL1 < 0, -1, 0))) %>% 
+    # calculate expected outcome of risking the 'RiskEst'
+    mutate(AchievedGain = RiskEst*LABEL1) %>% 
+    # calculate 'real' gain or loss
+    mutate(ExpectedGain = RiskKnown*LABEL1) %>% 
+    # get the sum of both columns
+    summarise(ExpectedPnL = sum(ExpectedGain),
+              AchievedPnL = sum(AchievedGain)) %>% 
+    # interpret the results
+    mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
+           FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+}
+
 # write the final object dat31 to the file for debugging or research
 if(research_mode == TRUE){
   # In research mode we will write results to the new folder
   write_rds(result, paste0("RESEARCH/", Sys.Date(), "-ResultC-", num_bars, "-", timeframe, ".rds"))
   h2o.saveModel(ModelC, path = path_model, force = T)
 }
-## ------ //added after 1st week of testing// -------------
-### Test existing model with new data to compare both results and keep the better model for production
-# load model
-ModelC_prev <- h2o.loadModel(paste0(path_model, "/DL_Classification",
-                                    num_bars, "-", timeframe))
-
-# result prev
-result_prev <- h2o.predict(ModelC_prev, recent_ML) %>% as.data.frame() %>% select(predict) %>% bind_cols(dat41, dat52) %>% 
-  select(predict, LABEL1) %>% 
-  # generate column of estimated risk trusting the model
-  mutate(RiskEst = if_else(predict == "BU", 1, -1)) %>%
-  # generate colmn of 'known' direction
-  mutate(RiskKnown = if_else(LABEL1 > 0, 1, if_else(LABEL1 < 0, -1, 0))) %>% 
-  # calculate expected outcome of risking the 'RiskEst'
-  mutate(AchievedGain = RiskEst*LABEL1) %>% 
-  # calculate 'real' gain or loss
-  mutate(ExpectedGain = RiskKnown*LABEL1) %>% 
-  # get the sum of both columns
-  summarise(ExpectedPnL = sum(ExpectedGain),
-            AchievedPnL = sum(AchievedGain)) %>% 
-  # interpret the results
-  mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
-         FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
-
 
 # save the model in case it's good and Achieved is not much less than Expected!
 if(research_mode == FALSE && result$FinalOutcome == "VeryGood" && 
@@ -170,7 +177,20 @@ if(research_mode == FALSE && result$FinalOutcome == "VeryGood" &&
   h2o.saveModel(ModelC, path = path_model, force = T)
 }
 
-
+# write logs if enabled
+if(write_log == TRUE){
+  # create folder where to save if not exists
+  path_LOG <- paste0(path_model, "/LOG/")
+  if(!dir.exists(path_LOG)){dir.create(path_LOG)}
+  # combine data and join them to one object
+  dat61 <- result %>% mutate(new_or_old = "NEW", timeframe = timeframe, model_type = "C")
+  dat62 <- result_prev %>% mutate(new_or_old = "PREV", timeframe = timeframe, model_type = "C")
+  bind_rows(dat61, dat62) %>% 
+    # write combined data to the file named with current date
+    write_csv(path = paste0(path_LOG, Sys.Date(),"-",timeframe, "C", ".csv"))
+  
+  
+}
 #h2o.shutdown(prompt = FALSE)
 
 

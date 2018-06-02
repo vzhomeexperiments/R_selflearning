@@ -12,13 +12,13 @@
 #' 
 #' Function can also write a log files with a results of the strategy test
 #' 
-#' @param price_dataset 
-#' @param indicator_dataset 
-#' @param num_bars 
-#' @param timeframe 
-#' @param research_mode
-#' @param path_model
-#' @param write_log Writes results of the newly trained model and previously used model to the file
+#' @param price_dataset       Dataset containing assets prices. It will be used as a label
+#' @param indicator_dataset   Dataset containing assets indicator which pattern will be used as predictor
+#' @param num_bars            Number of bars used to detect pattern
+#' @param timeframe           Data timeframe e.g. 1 min
+#' @param research_mode       When TRUE model will be saved and model result will be stored as well
+#' @param path_model          Path where the models are be stored
+#' @param write_log           Writes results of the newly trained model and previously used model to the file
 #'
 #' @return
 #' @export
@@ -171,8 +171,12 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     # create folder where to save if not exists
     path_LOG <- paste0(path_model, "/LOG/")
     if(!dir.exists(path_LOG)){dir.create(path_LOG)}
+    # combine data and join them to one object
+    dat61 <- dat31 %>% mutate(new_or_old = "NEW", timeframe = timeframe, model_type = "R")
+    dat62 <- dat31_prev %>% mutate(new_or_old = "PREV", timeframe = timeframe, model_type = "R")
+    bind_rows(dat61, dat62) %>% 
     # write combined data to the file named with current date
-    
+    write_csv(path = paste0(path_LOG, Sys.Date(),"-",timeframe, "R", ".csv"))
     
     
   }
