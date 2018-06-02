@@ -85,7 +85,7 @@ ModelC <- h2o.deeplearning(
   distribution = "AUTO",
   stopping_metric = "AUTO",
   balance_classes = F,
-  epochs = 100)
+  epochs = 300)
 
 #ModelC
 #summary(ModelC)
@@ -131,9 +131,34 @@ if(research_mode == TRUE){
   h2o.saveModel(ModelC, path = path_model, force = T)
 }
 
+### Test existing model with new data to compare both results and keep the better model for production
+# load model
+ModelC_prev <- h2o.loadModel(paste0(path_model, "/DL_Classification",
+                                    num_bars, "-", timeframe))
+
+# result prev
+result_prev <- h2o.predict(ModelC_prev, recent_ML) %>% as.data.frame() %>% select(predict) %>% bind_cols(dat41, dat52) %>% 
+  select(predict, LABEL1) %>% 
+  # generate column of estimated risk trusting the model
+  mutate(RiskEst = if_else(predict == "BU", 1, -1)) %>%
+  # generate colmn of 'known' direction
+  mutate(RiskKnown = if_else(LABEL1 > 0, 1, if_else(LABEL1 < 0, -1, 0))) %>% 
+  # calculate expected outcome of risking the 'RiskEst'
+  mutate(AchievedGain = RiskEst*LABEL1) %>% 
+  # calculate 'real' gain or loss
+  mutate(ExpectedGain = RiskKnown*LABEL1) %>% 
+  # get the sum of both columns
+  summarise(ExpectedPnL = sum(ExpectedGain),
+            AchievedPnL = sum(AchievedGain)) %>% 
+  # interpret the results
+  mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
+         FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+
 
 # save the model in case it's good and Achieved is not much less than Expected!
-if(research_mode == FALSE && result$FinalOutcome == "VeryGood" && result$FinalQuality > 0.6){
+if(research_mode == FALSE && result$FinalOutcome == "VeryGood" && 
+   #condition OR will also overwrite the model in case previously made model is performing worse than the new one
+   (result$FinalQuality > 0.6 || result$FinalQuality > result_prev$FinalQuality)){ 
   h2o.saveModel(ModelC, path = path_model, force = T)
 }
 
