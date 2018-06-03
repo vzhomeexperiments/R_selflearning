@@ -172,11 +172,11 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     path_LOG <- paste0(path_model, "/LOG/")
     if(!dir.exists(path_LOG)){dir.create(path_LOG)}
     # combine data and join them to one object
-    dat61 <- dat31 %>% mutate(new_or_old = "NEW", timeframe = timeframe, model_type = "R")
-    dat62 <- dat31_prev %>% mutate(new_or_old = "PREV", timeframe = timeframe, model_type = "R")
+    dat61 <- dat31 %>% mutate(new_or_old = "NEW", num_bars = num_bars, timeframe = timeframe, model_type = "R")
+    dat62 <- dat31_prev %>% mutate(new_or_old = "PREV", num_bars = num_bars, timeframe = timeframe, model_type = "R")
     bind_rows(dat61, dat62) %>% 
     # write combined data to the file named with current date
-    write_csv(path = paste0(path_LOG, Sys.Date(),"-",timeframe, "R", ".csv"))
+    write_csv(path = paste0(path_LOG, Sys.Date(), "-", num_bars, "-",timeframe, "R", ".csv"))
     
     
   }
