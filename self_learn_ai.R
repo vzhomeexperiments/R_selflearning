@@ -95,7 +95,7 @@ ModelC <- h2o.deeplearning(
   l1 = 1e-4,
   distribution = "AUTO",
   stopping_metric = "AUTO",
-  balance_classes = T, #trial to improve models performance 2018-06-12
+  balance_classes = F, #trial to improve models performance 2018-06-12 (F is better)
   epochs = 300)
 
 #ModelC
