@@ -47,32 +47,36 @@ self_learn_ai <- function(price_dataset, indicator_dataset, num_bars, timeframe,
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 1)
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1)
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60)
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
-  # num_bars <- 75
-  # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # num_bars <- 100
+  # timeframe <- 60 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   # write_log = TRUE
   
 # transform data and get the labels shift rows down
 dat51 <-  create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) %>% na.omit() %>% 
-  select(LABEL)#will be used for testing the strategy
+  select(LABEL)#will be used for testing the strategy. Note: the oldest data in the first row!!
+# checking how much the label is balanced
+dat61 <- dat51 %>% summarise(positives = sum(LABEL > 0),
+                             negatives = sum(LABEL < 0),
+                             zeroes    = sum(LABEL == 0)) 
 dat14 <- create_labelled_data(price_dataset, num_bars, type = "classification") %>% mutate_all(funs(lag), n=28) 
 # transform data for indicator
 dat15 <- create_transposed_data(indicator_dataset, num_bars) 
 # dataframe for the DL modelling it contains all 
 dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% filter_all(any_vars(. != 0))%>% na.omit() %<>% mutate_at(1, as.factor) 
 # split data to train and test blocks
-test_ind <- 1:round(0.3*(nrow(dat16)))
-dat21 <- dat16[test_ind, ]
-dat22 <- dat16[-test_ind,]
-dat52 <- dat51[test_ind, ]
+train_ind <- 1:round(0.7*(nrow(dat16))) #train indices 1:xxx
+dat21 <- dat16[-train_ind, ] #dataset to test the model
+dat22 <- dat16[train_ind,]   #dataset to train the model
+dat52 <- dat51[-train_ind, ] #dataset with price label for model test
 #library(plotly)
 ## Visualize new matrix in 3D
-#plot_ly(z = as.matrix(dat16[,2:101]), type = "surface")
+#plot_ly(z = as.matrix(dat16[,2:76]), type = "surface")
 
 ## ---------- Data Modelling  ---------------
 #h2o.init()

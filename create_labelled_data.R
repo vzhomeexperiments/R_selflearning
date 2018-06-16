@@ -29,8 +29,9 @@
 #' @examples
 create_labelled_data <- function(x, n = 50, type = "classification"){
   require(tidyverse)
-  #n <- 90
-  #
+  #n <- 100
+  #source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
+  #x <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
   #x <- read_rds(path = "test_data/prices1.rds")
   #type <- "classification"
   #type <- "regression"
@@ -42,7 +43,7 @@ create_labelled_data <- function(x, n = 50, type = "classification"){
   
   # operations within the list
   for (i in 1:length(dat11)) {
-    #i <- 1
+    #i <- 2
     if(type == "classification"){
       
         # classify by 2 classes 'BU', 'BE'
@@ -56,6 +57,7 @@ create_labelled_data <- function(x, n = 50, type = "classification"){
       if(!exists("dfr12")){
         dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as_tibble() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]]))} else {
           dfr12 <- dat11[i] %>% as.data.frame() %>% t() %>% as_tibble() %>% mutate(LABEL = 10000*(.[[1]]-.[[n]])) %>% 
+            #oldest data will be on top of the dataframe!
             bind_rows(dfr12)
         }
       

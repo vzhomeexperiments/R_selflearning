@@ -49,10 +49,14 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   dat15 <- create_transposed_data(indicator_dataset, num_bars) 
   # dataframe for the DL modelling it contains all 
   dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% na.omit() %>% filter_all(any_vars(. != 0))
+  # # split data to train and test blocks [code before 20180616]
+  # test_ind <- 1:round(0.3*(nrow(dat16)))
+  # dat21 <- dat16[test_ind, ]
+  # dat22 <- dat16[-test_ind,]
   # split data to train and test blocks
-  test_ind <- 1:round(0.3*(nrow(dat16)))
-  dat21 <- dat16[test_ind, ]
-  dat22 <- dat16[-test_ind,]
+  train_ind <- 1:round(0.7*(nrow(dat16))) #train indices 1:xxx
+  dat21 <- dat16[-train_ind, ] #dataset to test the model
+  dat22 <- dat16[train_ind,]   #dataset to train the model
   
   #library(plotly)
   ## Visualize new matrix in 3D

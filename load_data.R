@@ -25,7 +25,7 @@ load_data <- function(path_terminal, trade_log_file, time_period = 1){
   # path_terminal <- file.path(getwd(), "test_data")
   # trade_log_file <- "AI_CP"
   # trade_log_file <- "AI_Macd"
-  # time_period <- 1
+  # time_period <- 60
   require(tidyverse)
   require(lubridate)
   DFT1 <- try(read_csv(file = file.path(path_terminal, paste0(trade_log_file, time_period, ".csv")),
