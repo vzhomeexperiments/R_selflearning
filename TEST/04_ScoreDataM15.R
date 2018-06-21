@@ -99,7 +99,7 @@ for (PAIR in Pairs) {
 for (PAIR in Pairs) {
   # PAIR <- "EURUSD"
   # filter by row and select prediction
-  df <- result_R %>% filter(row.names(result) %in% PAIR) %>% select(predict)
+  df <- result_R %>% filter(row.names(result_R) %in% PAIR) %>% select(predict)
   # name the column with pair name
   names(df) <- PAIR
   # write to the files
