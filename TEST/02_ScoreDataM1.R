@@ -34,14 +34,14 @@ Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
           "AUDNZD", "CADJPY", "CHFJPY", "NZDJPY", "NZDCAD", "NZDCHF", "CADCHF")   
 
 ### Indicator values for the last periods
-data_latest <- macd %>% create_transposed_data(predictor_period) %>% head(28) %>% 
+data_latest <- macd %>% head(2*predictor_period) %>% create_transposed_data(predictor_period) %>% 
   # need to add fake category to avoid h2o prediction function errors
   mutate(LABEL = "BU") %<>% 
   # same as data_latest$LABEL <- as.factor(data_latest$LABEL)
   mutate_at(predictor_period + 1, as.factor) 
 
 ### also dataset for Regression prediction
-data_latest_R <- macd %>% create_transposed_data(predictor_period) %>% head(28) 
+data_latest_R <- macd %>% head(2*predictor_period) %>% create_transposed_data(predictor_period) 
 
 ### Predicting the next period
 # initialize the virtual machine
