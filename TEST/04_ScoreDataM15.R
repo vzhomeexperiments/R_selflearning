@@ -84,6 +84,15 @@ for (PAIR in Pairs) {
   write_csv(df, file.path(sbx_slaveT3,  file_string))
   write_csv(df, file.path(sbx_slaveT4,  file_string))
   write_csv(df, file.path(sbx_slaveT5,  file_string))
+  
+  # create record to the log file;
+  df_log <- result %>% filter(row.names(result) %in% PAIR) %>% select(predict) %>% 
+    # add new column
+    mutate(DT = Sys.time())
+  # write to the file
+  file_string <- paste0("AI_M", time_frame, "_Direction", PAIR, "-log.csv")
+  write_csv(df_log, file.path(sbx, file_string),append = TRUE)
+  
 }
 
 # same for regression (writing predicted price change to the file)
@@ -100,6 +109,15 @@ for (PAIR in Pairs) {
   write_csv(df, file.path(sbx_slaveT3,  file_string))
   write_csv(df, file.path(sbx_slaveT4,  file_string))
   write_csv(df, file.path(sbx_slaveT5,  file_string))
+  
+  # create record to the log file;
+  df_log <- result_R %>% filter(row.names(result_R) %in% PAIR) %>% select(predict) %>% 
+    # add new column
+    mutate(DT = Sys.time())
+  # write to the file
+  file_string <- paste0("AI_M", time_frame, "_Change", PAIR, "-log.csv")
+  write_csv(df_log, file.path(sbx, file_string),append = TRUE)
+  
 }
 
 # outcome is series of files written to the sandboxes of each terminals
