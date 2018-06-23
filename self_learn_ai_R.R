@@ -32,6 +32,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelled_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
+  # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
   # # load prices of 28 currencies
   # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
   # # load macd indicator of 28 currencies
@@ -54,9 +55,13 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # dat21 <- dat16[test_ind, ]
   # dat22 <- dat16[-test_ind,]
   # split data to train and test blocks
-  train_ind <- 1:round(0.7*(nrow(dat16))) #train indices 1:xxx
-  dat21 <- dat16[-train_ind, ] #dataset to test the model
+  train_ind  <- 1:round(0.7*(nrow(dat16))) #train indices 1:xxx
+  dat21 <- dat16[-train_ind, ] #dataset to test the model using 30% of data
   dat22 <- dat16[train_ind,]   #dataset to train the model
+  
+  # get dataset to test the model on the very latest 10% of data points
+  train_ind2 <- 1:round(0.9*(nrow(dat16))) #train indices created to obtain latest observations for test
+  dat20 <- dat16[-train_ind2, ] #dataset to test the model using 10% of data
   
   #library(plotly)
   ## Visualize new matrix in 3D
@@ -102,30 +107,22 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # dat21 <- read_rds("test_data/model/test_Regr.rds")
   # ModelC <- h2o.loadModel("test_data/model/DL_Regression1")
   
-  ## Checking how the model predict using the latest dataset
+  ## Checking how the new model predict using the latest dataset
   # upload recent dataset to predict
   recent_ML  <- as.h2o(x = dat21[,-1], destination_frame = "recent_ML")
   # use model to predict
   result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict) %>% round()
-  
   ## evaluate hypothetical results of trading using the model
-  # join real values with predicted values
-  dat31 <- dat21 %>% select(LABEL) %>% bind_cols(result) %>% 
-    # add column risk that has +1 if buy trade and -1 if sell trade, 0 (no risk) if prediction is exact zero
-    mutate(Risk = if_else(predict > 0, 1, if_else(predict < 0, -1, 0))) %>% 
-    # calculate expected outcome of risking the 'Risk': trade according to prediction
-    mutate(ExpectedGain = predict*Risk) %>% 
-    # calculate 'real' gain or loss. LABEL is how the price moved (ground truth) so the column will be real outcome
-    mutate(AchievedGain = LABEL*Risk) %>% 
-    # get the sum of both columns
-    # Column Expected PNL would be the result in case all trades would be successful
-    # Column Achieved PNL is the results achieved in reality
-    summarise(ExpectedPnL = sum(ExpectedGain),
-              AchievedPnL = sum(AchievedGain)) %>% 
-    # interpret the results
-    mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
-           FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+  dat31 <- test_model(dat21, result, test_type = "regression")
 
+  ## Checking how the new model predict using only last 10% of data
+  # upload recent dataset to predict
+  recent_ML_10  <- as.h2o(x = dat20[,-1], destination_frame = "recent_ML_10")
+  # use model to predict
+  result_10 <- h2o.predict(ModelC, recent_ML_10) %>% as.data.frame() %>% select(predict) %>% round()
+  ## evaluate hypothetical results of trading using the model
+  dat32 <- test_model(dat20, result_10, test_type = "regression")
+  
 ## ------ //added after 1st week of testing// -------------  
 ### Test existing model with new data to compare both results and keep the better model for production
   # check existence of the model trained previously and if exist, load it and test strategy using it
@@ -134,26 +131,17 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   if(!class(ModelC_prev)=='try-error'){
     # result prev
     result_prev <- h2o.predict(ModelC_prev, recent_ML) %>% as.data.frame() %>% select(predict) %>% round()
-      
+    
     ## evaluate hypothetical results of trading using the model
-    # join real values with predicted values
-    dat31_prev <- dat21 %>% select(LABEL) %>% bind_cols(result_prev) %>% 
-      # add column risk that has +1 if buy trade and -1 if sell trade
-      mutate(Risk = if_else(predict > 0, 1, if_else(predict < 0, -1, 0))) %>% 
-      # calculate expected outcome of risking the 'Risk'
-      mutate(ExpectedGain = predict*Risk) %>% 
-      # calculate 'real' gain or loss
-      mutate(AchievedGain = LABEL*Risk) %>% 
-      # get the sum of both columns
-      summarise(ExpectedPnL = sum(ExpectedGain),
-                AchievedPnL = sum(AchievedGain)) %>% 
-      # interpret the results
-      mutate(FinalOutcome = if_else(AchievedPnL > 0, "VeryGood", "VeryBad"),
-             FinalQuality = AchievedPnL/(0.0001+ExpectedPnL))
+    dat31_prev <- test_model(dat21, result_prev, test_type = "regression")
+
+    # result prev with only 10% of latest data (only for research purposes)
+    # result prev
+    result_prev_10 <- h2o.predict(ModelC_prev, recent_ML_10) %>% as.data.frame() %>% select(predict) %>% round()
     
-    
-    
-    
+    ## evaluate hypothetical results of trading using the previous model
+    dat31_prev_10 <- test_model(dat20, result_prev_10, test_type = "regression")
+
   }
   
   # write the final object dat31 to the file for debugging or research

@@ -17,6 +17,7 @@ source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelle
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai_R.R")
+source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
 
 #absolute path to store model objects (useful when scheduling tasks)
 path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
