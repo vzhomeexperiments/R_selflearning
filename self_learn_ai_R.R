@@ -33,19 +33,19 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 1)
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60)
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1)
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60)
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
-  # num_bars <- 75
-  # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # num_bars <- 100
+  # timeframe <- 60 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   # write_log = TRUE
   
-  # transform data and get the labels shift rows down
+  # transform data and get the labels shift rows down Note: the oldest data in the first row!!
   dat14 <- create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) 
-  # transform data for indicator
+  # transform data for indicator Note: the oldest data in the first row!!
   dat15 <- create_transposed_data(indicator_dataset, num_bars) 
   # dataframe for the DL modelling it contains all 
   dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% na.omit() %>% filter_all(any_vars(. != 0))
@@ -111,13 +111,15 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   ## evaluate hypothetical results of trading using the model
   # join real values with predicted values
   dat31 <- dat21 %>% select(LABEL) %>% bind_cols(result) %>% 
-    # add column risk that has +1 if buy trade and -1 if sell trade
-    mutate(Risk = if_else(predict > 0, 1, if_else(predict == 0, 0, -1))) %>% 
-    # calculate expected outcome of risking the 'Risk'
+    # add column risk that has +1 if buy trade and -1 if sell trade, 0 (no risk) if prediction is exact zero
+    mutate(Risk = if_else(predict > 0, 1, if_else(predict < 0, -1, 0))) %>% 
+    # calculate expected outcome of risking the 'Risk': trade according to prediction
     mutate(ExpectedGain = predict*Risk) %>% 
-    # calculate 'real' gain or loss
+    # calculate 'real' gain or loss. LABEL is how the price moved (ground truth) so the column will be real outcome
     mutate(AchievedGain = LABEL*Risk) %>% 
     # get the sum of both columns
+    # Column Expected PNL would be the result in case all trades would be successful
+    # Column Achieved PNL is the results achieved in reality
     summarise(ExpectedPnL = sum(ExpectedGain),
               AchievedPnL = sum(AchievedGain)) %>% 
     # interpret the results
@@ -137,7 +139,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     # join real values with predicted values
     dat31_prev <- dat21 %>% select(LABEL) %>% bind_cols(result_prev) %>% 
       # add column risk that has +1 if buy trade and -1 if sell trade
-      mutate(Risk = if_else(predict > 0, 1, if_else(predict == 0, 0, -1))) %>% 
+      mutate(Risk = if_else(predict > 0, 1, if_else(predict < 0, -1, 0))) %>% 
       # calculate expected outcome of risking the 'Risk'
       mutate(ExpectedGain = predict*Risk) %>% 
       # calculate 'real' gain or loss
@@ -165,6 +167,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # save the model in case it's good and Achieved is not much less than Expected!
   if(research_mode == FALSE && dat31$FinalOutcome == "VeryGood" && 
      #condition OR will also overwrite the model in case previously made model is performing worse than the new one
+     # NOTE: this condition dat31$FinalQuality > 0.8 can be removed after finding the first model
      (dat31$FinalQuality > 0.8 || dat31$FinalQuality > dat31_prev$FinalQuality)){
   h2o.saveModel(ModelC, path = path_model, force = T)
   }
