@@ -26,7 +26,7 @@ predictor_period <- 75  #this variable will define market type period (number of
 macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                   trade_log_file = "AI_Macd", 
                   time_period = time_frame,
-                  data_deepth = 300)
+                  data_deepth = "300")
 
 # Vector of currency pairs
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",

@@ -34,13 +34,13 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 60, data_deepth = 14200)
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 15, data_deepth = "30000")
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 60, data_deepth = 14200)
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 15, data_deepth = "30000")
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
-  # num_bars <- 100
-  # timeframe <- 60 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # num_bars <- 75
+  # timeframe <- 15 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   # write_log = TRUE
   
@@ -89,7 +89,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     distribution = "AUTO",
     stopping_metric = "MSE",
     #balance_classes = F,
-    epochs = 300)
+    epochs = 100)
   
   #ModelC
   #summary(ModelC)
