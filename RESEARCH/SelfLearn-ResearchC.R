@@ -33,12 +33,14 @@ for (AHEAD in options_predict_ahead) {
     # load prices of 28 currencies
     prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_CP", 
-                    time_period = PERIODS)
+                    time_period = PERIODS,
+                    data_deepth = 14200)
     
     # load macd indicator of 28 currencies
     macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_Macd", 
-                    time_period = PERIODS)
+                    time_period = PERIODS,
+                    data_deepth = 14200)
     
     # to be used for tests of demonstrations
     # prices <- read_rds("test_data/prices.rds")
