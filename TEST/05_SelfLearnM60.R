@@ -2,7 +2,7 @@
 # R Script to auto-select and train the Deep Learning model on Financial Asset Time Series Data
 # ----------------------------------------------------------------------------------------
 # (C) 2018 Vladimir Zhbanko
-# https://www.udemy.com/draft/1482480/?couponCode=LAZYTRADE7-10
+# https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 # Script to gather financial data, transform it and to perform
 # Supervised Deep Learning Classification Modelling
 #
