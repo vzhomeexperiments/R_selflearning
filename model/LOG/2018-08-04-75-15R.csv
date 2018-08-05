@@ -1,0 +1,3 @@
+ExpectedPnL,AchievedPnL,FinalOutcome,FinalQuality,new_or_old,num_bars,timeframe,model_type
+137430,-5741.399999999904,VeryBad,-0.04177690457558185,NEW,75,15,R
+138262,91209.39999999997,VeryGood,0.6596852348008233,PREV,75,15,R

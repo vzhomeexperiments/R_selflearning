@@ -27,13 +27,13 @@ path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
 prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_CP", 
                     time_period = 1,
-                    data_deepth = "14200")
+                    data_deepth = "100000")
 
 # load macd indicator of 28 currencies
 macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_Macd", 
                     time_period = 1,
-                    data_deepth = "14200")
+                    data_deepth = "100000")
 
 # to be used for tests of demonstrations
 # prices <- read_rds("test_data/prices.rds")
