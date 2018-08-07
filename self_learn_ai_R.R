@@ -16,7 +16,7 @@
 #' @param indicator_dataset   Dataset containing assets indicator which pattern will be used as predictor
 #' @param num_bars            Number of bars used to detect pattern
 #' @param timeframe           Data timeframe e.g. 1 min
-#' @param research_mode       When TRUE model will be saved and model result will be stored as well
+#' @param research_mode       When TRUE model will be saved and model result will be stored as well. To be used at the first run.
 #' @param path_model          Path where the models are be stored
 #' @param write_log           Writes results of the newly trained model and previously used model to the file
 #'
@@ -34,11 +34,13 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 15, data_deepth = "30000")
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 15, data_deepth = "50000")
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 15, data_deepth = "30000")
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 15, data_deepth = "50000")
+  ## --- use *.rds files provided in the repository as an example
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
+  ## ---
   # num_bars <- 75
   # timeframe <- 15 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
@@ -46,10 +48,13 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   
   # transform data and get the labels shift rows down Note: the oldest data in the first row!!
   dat14 <- create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) 
-  # transform data for indicator Note: the oldest data in the first row!!
+  # transform data for indicator. Note: the oldest data in the first row!!
   dat15 <- create_transposed_data(indicator_dataset, num_bars) 
-  # dataframe for the DL modelling it contains all 
-  dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% na.omit() %>% filter_all(any_vars(. != 0))
+  # dataframe for the DL modelling it contains all the available data. 
+  # Note: Zero values in rows will mean that there was no data in the MT4 database. 
+  #       These rows will be removed before modelling however it's advisable not to have those as it might give data artefacts!
+  dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% na.omit() %>% filter_all(any_vars(. != 0)) %>% filter(LABEL < 250, LABEL > -250)
+  # checking the data: summary(dat16) # too high values in the LABEL Column are non-sense! hist(dat16$LABEL)
   # # split data to train and test blocks [code before 20180616]
   # test_ind <- 1:round(0.3*(nrow(dat16)))
   # dat21 <- dat16[test_ind, ]
@@ -112,9 +117,9 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   recent_ML  <- as.h2o(x = dat21[,-1], destination_frame = "recent_ML")
   # use model to predict
   result <- h2o.predict(ModelC, recent_ML) %>% as.data.frame() %>% select(predict) %>% round()
-  ## evaluate hypothetical results of trading using the model
+  ## evaluate hypothetical results of trading using the model, do for several take profit and stop loss levels. Bring the best results:
   dat31 <- test_model(dat21, result, test_type = "regression")
-
+    
   ## Checking how the new model predict using only last 10% of data
   # upload recent dataset to predict
   recent_ML_10  <- as.h2o(x = dat20[,-1], destination_frame = "recent_ML_10")
@@ -172,8 +177,14 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     bind_rows(dat61, dat62) %>% 
     # write combined data to the file named with current date
     write_csv(path = paste0(path_LOG, Sys.Date(), "-", num_bars, "-",timeframe, "R", ".csv"))
-    
-    
+    # write the best current TP/SL level
+    bind_rows(dat61, dat62) %>% 
+      # take the best quality level
+      slice(which.max(FinalQuality)) %>% 
+      # select the TPSL levels
+      select(TPSL_Level) %>% 
+      # write best possible trigger to the file 
+      write_csv(path = paste0(path_LOG, "AI_T-", timeframe, ".csv"))
   }
   
   #h2o.shutdown(prompt = FALSE)

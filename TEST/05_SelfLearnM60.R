@@ -57,4 +57,14 @@ self_learn_ai_R(price_dataset = prices,
                 write_log = TRUE)
 
 h2o.shutdown(prompt = F)
+
+# update trigger in the sandboxes
+# read trigger value to the repository and paste it to the sandboxes
+file.copy(from = file.path(path_model, "LOG", "AI_T-60.csv"), 
+          to = c("C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/AI_T-60.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files/AI_T-60.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files/AI_T-60.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files/AI_T-60.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal5/MQL4/Files/AI_T-60.csv"),
+          overwrite = TRUE) 
 #### End

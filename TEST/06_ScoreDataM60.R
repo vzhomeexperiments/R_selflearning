@@ -22,6 +22,7 @@ sbx_slaveT4 <- "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files"
 sbx_slaveT5 <- "C:/Program Files (x86)/FxPro - Terminal5/MQL4/Files"
 time_frame <- 60         #this is to define chart timeframe periodicity
 predictor_period <- 100  #this variable will define market type period (number of bars)
+
 # load macd indicator of 28 currencies, use for demo: macd <- read_rds("test_data/macd.rds")
 macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                   trade_log_file = "AI_Macd", 
@@ -120,6 +121,7 @@ for (PAIR in Pairs) {
   write_csv(df_log, file.path(sbx, file_string),append = TRUE)
   
 }
+
 
 # outcome is series of files written to the sandboxes of each terminals
 

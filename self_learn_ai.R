@@ -34,6 +34,7 @@
 #' @param timeframe 
 #' @param path_model
 #' @param write_log
+#' @param research_mode 
 #'
 #' @return
 #' @export
