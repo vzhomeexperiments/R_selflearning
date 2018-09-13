@@ -27,13 +27,13 @@ path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
 prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_CP", 
                     time_period = 1,
-                    data_deepth = "100000")
+                    data_deepth = "50000")
 
 # load macd indicator of 28 currencies
 macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_Macd", 
                     time_period = 1,
-                    data_deepth = "100000")
+                    data_deepth = "50000")
 
 # to be used for tests of demonstrations
 # prices <- read_rds("test_data/prices.rds")
@@ -56,4 +56,16 @@ self_learn_ai_R(price_dataset = prices,
                 path_model = path_model,
                 write_log = TRUE)
 h2o.shutdown(prompt = F)
+
+# update trigger in the sandboxes
+# read trigger value to the repository and paste it to the sandboxes
+file.copy(from = file.path(path_model, "LOG", "AI_T-1.csv"), 
+          to = c("C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/AI_T-1.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files/AI_T-1.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files/AI_T-1.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal4/MQL4/Files/AI_T-1.csv",
+                 "C:/Program Files (x86)/FxPro - Terminal5/MQL4/Files/AI_T-1.csv"),
+          overwrite = TRUE) 
+
+
 #### End
