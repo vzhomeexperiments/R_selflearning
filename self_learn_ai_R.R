@@ -34,15 +34,15 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/load_data.R")
   # source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
   # # load prices of 28 currencies
-  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 15, data_deepth = "50000")
+  # price_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_CP", time_period = 1, data_deepth = "50000")
   # # load macd indicator of 28 currencies
-  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 15, data_deepth = "50000")
+  # indicator_dataset <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/", trade_log_file = "AI_Macd", time_period = 1, data_deepth = "50000")
   ## --- use *.rds files provided in the repository as an example
   # price_dataset <- read_rds("test_data/prices1.rds")
   # indicator_dataset <- read_rds("test_data/macd.rds")
   ## ---
   # num_bars <- 75
-  # timeframe <- 15 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
+  # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   # write_log = TRUE
   
@@ -70,7 +70,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   
   #library(plotly)
   ## Visualize new matrix in 3D
-  #plot_ly(z = as.matrix(dat16[,2:101]), type = "surface")
+  #plot_ly(z = as.matrix(dat16[,2:76]), type = "surface")
   
   ## ---------- Data Modelling  ---------------
   #h2o.init()
@@ -87,7 +87,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
     activation = "Tanh",
     overwrite_with_best_model = TRUE, 
     autoencoder = FALSE, 
-    hidden = c(80,50,30,15,3), 
+    hidden = c(50,30,15,5), 
     loss = "Automatic",
     sparse = TRUE,
     l1 = 1e-4,

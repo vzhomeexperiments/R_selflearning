@@ -24,8 +24,10 @@ test_model <- function(test_dataset, predictor_dataset, test_type){
   require(tidyverse)
   # arguments for debugging for regression
   # test_dataset <- read_rds("test_data/dat21.rds")   
+  # test_dataset <- dat21
   # test_dataset <- dat20
   # predictor_dataset <- read_rds("test_data/result_prev.rds")
+  # predictor_dataset <- result
   # predictor_dataset <- result_10
   # test_type <- "regression"
   
@@ -38,10 +40,10 @@ test_model <- function(test_dataset, predictor_dataset, test_type){
 ## evaluate hypothetical results of trading using the model
     
     # do this test for several trading trigger levels
-    tp_sl_levels <- c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 
+    tp_sl_levels <- c(5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 
                       160, 170, 180, 190, 200)
     for (TPSL in tp_sl_levels) {
-      # TPSL <- 50
+      # TPSL <- 5
       # do the testing
       if(!exists("dat31")){
         # join real values with predicted values
@@ -106,8 +108,8 @@ test_model <- function(test_dataset, predictor_dataset, test_type){
     
     ### === interfpretation of the obtained results ===
     # step 1: keep significant number of trades
-    max_trades <- 0.8 * max(dat31$TotalTrades)
-    min_trades <- 0.6 * max(dat31$TotalTrades)
+    max_trades <- 0.8 * max(dat31$TotalTrades) %>% round()
+    min_trades <- 0.2 * max(dat31$TotalTrades) %>% round()
     # step 2: filter out only those results
     dat51 <- dat31 %>% filter(TotalTrades < max_trades, TotalTrades > min_trades) %>% 
       # step 3: keep only rows with the maximum quality
