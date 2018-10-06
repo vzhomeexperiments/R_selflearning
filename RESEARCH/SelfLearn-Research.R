@@ -18,6 +18,7 @@ source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_labelle
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transposed_data.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai_R.R")
+source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
 
 h2o.init()
 
@@ -31,16 +32,19 @@ for (AHEAD in options_predict_ahead) {
     #PERIODS <- 1
     #### Read asset prices and indicators ==========================================
     # load prices of 28 currencies
+    if(PERIODS == 1) {file_bars <- 50000}
+    if(PERIODS == 15) {file_bars <-30000}
+    if(PERIODS == 60) {file_bars <-12000}
     prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_CP", 
                     time_period = PERIODS,
-                    data_deepth = 14200)
+                    data_deepth = file_bars)
     
     # load macd indicator of 28 currencies
     macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_Macd", 
                     time_period = PERIODS,
-                    data_deepth = 14200)
+                    data_deepth = file_bars)
     
     # to be used for tests of demonstrations
     # prices <- read_rds("test_data/prices.rds")

@@ -53,7 +53,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # dataframe for the DL modelling it contains all the available data. 
   # Note: Zero values in rows will mean that there was no data in the MT4 database. 
   #       These rows will be removed before modelling however it's advisable not to have those as it might give data artefacts!
-  dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% na.omit() %>% filter_all(any_vars(. != 0)) %>% filter(LABEL < 250, LABEL > -250)
+  dat16 <- dat14 %>% select(LABEL) %>% bind_cols(dat15) %>% na.omit() %>% filter_all(any_vars(. != 0)) %>% filter(LABEL < 600, LABEL > -600)
   # checking the data: summary(dat16) # too high values in the LABEL Column are non-sense! hist(dat16$LABEL)
   # # split data to train and test blocks [code before 20180616]
   # test_ind <- 1:round(0.3*(nrow(dat16)))
