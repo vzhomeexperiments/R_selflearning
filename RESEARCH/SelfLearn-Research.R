@@ -19,7 +19,8 @@ source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/create_transpo
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai_R.R")
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
-
+#absolute path to store model objects (useful when scheduling tasks)
+path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
 h2o.init()
 
 ### Create For loop to test possible outcomes and test those strategies
@@ -32,9 +33,9 @@ for (AHEAD in options_predict_ahead) {
     #PERIODS <- 1
     #### Read asset prices and indicators ==========================================
     # load prices of 28 currencies
-    if(PERIODS == 1) {file_bars <- 50000}
-    if(PERIODS == 15) {file_bars <-30000}
-    if(PERIODS == 60) {file_bars <-12000}
+    if(PERIODS == 1) {file_bars <- "50000"}
+    if(PERIODS == 15) {file_bars <-"35000"}
+    if(PERIODS == 60) {file_bars <-"12000"}
     prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_CP", 
                     time_period = PERIODS,
@@ -56,7 +57,9 @@ for (AHEAD in options_predict_ahead) {
                 indicator_dataset = macd,
                 num_bars = AHEAD,
                 timeframe = PERIODS,
-                research_mode = TRUE)
+                path_model = path_model,
+                research_mode = TRUE,
+                write_log = TRUE)
 
     
   }

@@ -43,7 +43,7 @@ h2o.init()
 # performing Deep Learning classification using the custom function
 self_learn_ai(price_dataset = prices,
               indicator_dataset = macd,
-              num_bars = 100,
+              num_bars = 75,
               timeframe = 60,
               path_model = path_model,
               write_log = TRUE)
@@ -51,7 +51,7 @@ self_learn_ai(price_dataset = prices,
 # performing Deep Learning Regression using the custom function
 self_learn_ai_R(price_dataset = prices,
                 indicator_dataset = macd,
-                num_bars = 100,
+                num_bars = 75,
                 timeframe = 60,
                 path_model = path_model,
                 write_log = TRUE)
