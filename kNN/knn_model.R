@@ -39,10 +39,11 @@ d.training <- base_buy[index,]
 # Subset test set with index
 d.test <- base_buy[-index,]
 
-# Train a model
+# Train a model 
 model_knn <- train(x = d.training[ , 1:5],
                    y = d.training[ , 6],
                    method = 'knn')
+
 
 # Predict the probabilities (newdata should come from new observations)
 predict_prob <- predict(object = model_knn, type = "prob", newdata = d.test[,1:5])
@@ -50,10 +51,14 @@ predict_prob <- predict(object = model_knn, type = "prob", newdata = d.test[,1:5
 # Predict the classes
 predict_class <- predict(object = model_knn, type = "raw", newdata = d.test[,1:5])
 
-
 # Evaluate the predictions
 table(predict_class)
-
+table(d.test$V6)
 # Confusion matrix 
 confusionMatrix(predict_class,d.test[,6])
 
+##  how to return probability using our model?
+# A my new observation
+new_obs <- d.test[1, 1:5]
+# my probability value
+win_buy <- predict(object = model_knn, type = "prob", newdata = new_obs)
