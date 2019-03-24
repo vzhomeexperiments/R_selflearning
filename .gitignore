@@ -26,3 +26,5 @@ vignettes/*.pdf
 R_selflearning.Rproj
 CombineTrain-Trials.R
 ScoreData.R
+model/LOG/AI_T-15.csv
+model/LOG/AI_T-60.csv

@@ -31,16 +31,21 @@ for (AHEAD in options_predict_ahead) {
     #PERIODS <- 1
     #### Read asset prices and indicators ==========================================
     # load prices of 28 currencies
+    #### Read asset prices and indicators ==========================================
+    # load prices of 28 currencies
+    if(PERIODS == 1) {file_bars <- "50000"}
+    if(PERIODS == 15) {file_bars <-"35000"}
+    if(PERIODS == 60) {file_bars <-"12000"}
     prices <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_CP", 
                     time_period = PERIODS,
-                    data_deepth = 14200)
+                    data_deepth = file_bars)
     
     # load macd indicator of 28 currencies
     macd <- load_data(path_terminal = "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/",
                     trade_log_file = "AI_Macd", 
                     time_period = PERIODS,
-                    data_deepth = 14200)
+                    data_deepth = file_bars)
     
     # to be used for tests of demonstrations
     # prices <- read_rds("test_data/prices.rds")
