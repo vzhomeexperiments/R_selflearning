@@ -5,6 +5,9 @@
 # https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 # Script to gather financial data, transform it and to perform
 # Supervised Deep Learning Classification Modelling
+# 
+# Purpose of this script is to simulate results in the several possible variants
+# NOTE: delete all previously create models from the folder R_selflearning/model after updating h2o engine
 #
 # load libraries to use and custom functions
 library(tidyverse)
@@ -21,6 +24,7 @@ source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/self_learn_ai_
 source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/test_model.R")
 #absolute path to store model objects (useful when scheduling tasks)
 path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
+
 h2o.init()
 
 ### Create For loop to test possible outcomes and test those strategies
@@ -75,6 +79,7 @@ files_to_analyse <-list.files(file.path(getwd(),"RESEARCH/"), pattern="*.rds", f
 # e.g.: str_extract(files_to_analyse[2], "(?<=Result-)(.*)(?=.rds)")
 # 
 for (FILE in files_to_analyse) {
+  #FILE <- files_to_analyse[3]
   #extract nbars from the file name, note we use only those of the latest date
   num_bars <- FILE %>% str_extract(paste0("(?<=",Sys.Date(),"-Result-)(.*)(?=.rds)"))
   if(!exists("summary_file")){

@@ -45,6 +45,8 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # timeframe <- 1 # indicates the timeframe used for training (e.g. 1 minute, 15 minutes, 60 minutes, etc)
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/model"
   # write_log = TRUE
+  # research_mode = TRUE
+  # research_mode = FALSE
   
   # transform data and get the labels shift rows down Note: the oldest data in the first row!!
   dat14 <- create_labelled_data(price_dataset, num_bars, type = "regression") %>% mutate_all(funs(lag), n=28) 
