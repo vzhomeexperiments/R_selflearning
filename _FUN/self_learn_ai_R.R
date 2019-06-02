@@ -50,6 +50,7 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS"
   # write_log = TRUE
   # setup_mode <- TRUE
+  # setup_mode <- FALSE
   # research_mode = TRUE
   # research_mode = FALSE
   
@@ -64,9 +65,10 @@ self_learn_ai_R <- function(price_dataset, indicator_dataset, num_bars, timefram
   # checking the data: summary(dat16) # too high values in the LABEL Column are non-sense! hist(dat16$LABEL)
   
   # split data to train and test blocks
-  train_ind  <- 1:round(0.7*(nrow(dat16))) #train indices 1:xxx
-  dat21 <- dat16[-train_ind, ] #dataset to test the model using 30% of data
-  dat22 <- dat16[train_ind,]   #dataset to train the model
+  # note: model will be tested on the PAST data and trained on the NEWEST data
+  test_ind  <- 1:round(0.3*(nrow(dat16))) #train indices 1:xxx
+  dat21 <- dat16[test_ind, ]    #dataset to test the model using 30% of data
+  dat22 <- dat16[-test_ind, ]   #dataset to train the model
   
   #library(plotly)
   ## Visualize new matrix in 3D
