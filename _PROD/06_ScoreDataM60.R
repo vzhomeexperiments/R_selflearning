@@ -9,8 +9,9 @@ library(tidyverse)
 library(h2o)
 library(lubridate)
 library(magrittr)
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/load_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_transposed_data.R")
+library(lazytrade)
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/load_asset_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_transposed_data.R")
 #### Read asset prices and indicators ==========================================
 #absolute path with the data (choose either MT4 directory or a '_TEST_DATA' folder)
 path_data <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
@@ -25,10 +26,10 @@ sbx_slaveT5 <- "C:/Program Files (x86)/FxPro - Terminal5/MQL4/Files"
 time_frame <- 60         #this is to define chart timeframe periodicity
 predictor_period <- 75  #this variable will define market type period (number of bars)
 # load macd indicator of 28 currencies, use for demo: macd <- read_rds("test_data/macd.rds")
-macd <- load_data(path_terminal = path_data,
-                  trade_log_file = "AI_Macd", 
-                  time_period = time_frame,
-                  data_deepth = "300")
+macd <- load_asset_data(path_terminal = path_data,
+                        trade_log_file = "AI_Macd", 
+                        time_period = time_frame,
+                        data_deepth = "300")
 
 # Vector of currency pairs
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",

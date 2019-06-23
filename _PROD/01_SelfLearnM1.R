@@ -11,12 +11,13 @@ library(tidyverse)
 library(h2o)
 library(lubridate)
 library(magrittr)
+library(lazytrade)
 #library(plotly)
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/load_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_labelled_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_transposed_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/self_learn_ai_R.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/test_model.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/load_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_labelled_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_transposed_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/self_learn_ai_R.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/test_model.R")
 
 #absolute path to store model objects (useful when scheduling tasks)
 path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS"
@@ -27,13 +28,13 @@ path_data <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
 
 #### Read asset prices and indicators ==========================================
 # load prices of 28 currencies
-prices <- load_data(path_terminal = path_data,
+prices <- load_asset_data(path_terminal = path_data,
                     trade_log_file = "AI_CP", 
                     time_period = 1,
                     data_deepth = "50000")
 
 # load macd indicator of 28 currencies
-macd <- load_data(path_terminal = path_data,
+macd <- load_asset_data(path_terminal = path_data,
                     trade_log_file = "AI_Macd", 
                     time_period = 1,
                     data_deepth = "50000")

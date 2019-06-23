@@ -15,11 +15,12 @@ library(h2o)
 library(lubridate)
 library(magrittr)
 #library(plotly)
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/load_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_labelled_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_transposed_data.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/self_learn_ai_R.R")
-source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/test_model.R")
+library(lazytrade)
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/load_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_labelled_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/create_transposed_data.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/self_learn_ai_R.R")
+#source("C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_FUN/test_model.R")
 
 #absolute path to store model objects
 path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS"
@@ -44,13 +45,13 @@ for (AHEAD in options_predict_ahead) {
     if(PERIODS == 1) {file_bars <- "50000"}
     if(PERIODS == 15) {file_bars <-"35000"}
     if(PERIODS == 60) {file_bars <-"12000"}
-    prices <- load_data(path_terminal = path_data,
+    prices <- load_asset_data(path_terminal = path_data,
                     trade_log_file = "AI_CP", 
                     time_period = PERIODS,
                     data_deepth = file_bars)
     
     # load macd indicator of 28 currencies
-    macd <- load_data(path_terminal = path_data,
+    macd <- load_asset_data(path_terminal = path_data,
                     trade_log_file = "AI_Macd", 
                     time_period = PERIODS,
                     data_deepth = file_bars)
