@@ -29,3 +29,6 @@ ScoreData.R
 model/LOG/AI_T-15.csv
 model/LOG/AI_T-60.csv
 *.csv
+_DATA/
+_MODELS/
+_SETUP/
