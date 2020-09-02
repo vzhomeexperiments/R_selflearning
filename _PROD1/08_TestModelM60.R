@@ -5,12 +5,12 @@
 # https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 #
 # load libraries to use and custom functions
-#library(tidyverse)
-library(magrittr)
 library(dplyr)
+library(magrittr)
 library(readr)
 library(h2o)
 library(lazytrade)
+library(lubridate)
 
 #### definition of paths and variables ==========================================
 path_data <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_DATA"
@@ -20,8 +20,6 @@ path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS
 path_sbxm <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
 path_sbxs <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
 
-time_frame <- 60         #this is to define chart timeframe periodicity
-predictor_period <- 75  #this variable will define market type period (number of bars)
 
 # Vector of currency pairs
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
@@ -36,16 +34,17 @@ for (PAIR in Pairs) {
   ## PAIR <- "EURUSD"
 
   # test the results of predictions
-  aml_test_model(symbol = PAIR,
-                 num_bars = predictor_period,
-                 timeframe = time_frame,
-                 path_model = path_model,
-                 path_data = path_data)  
+  
+ aml_test_model(symbol = PAIR,
+                num_bars = 600,
+                timeframe = 60,
+                path_model = path_model,
+                path_data = path_data)
 
 }
 
 # shutdown h2o
-h2o.shutdown(prompt = F)
+h2o.shutdown(prompt = FALSE)
 
 # outcome is series of files written to the sandboxes of each terminals
 

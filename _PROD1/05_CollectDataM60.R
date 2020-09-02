@@ -1,23 +1,21 @@
 # ----------------------------------------------------------------------------------------
-# R Script to collect the asset indicator data and respective 'future' price change
+# R Script to collect (aggregate) the asset indicator data and respective prices
 # ----------------------------------------------------------------------------------------
-# (C) 2019 Vladimir Zhbanko
+# (C) 2020 Vladimir Zhbanko
 # https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 #
 # load libraries to use and custom functions
-#library(tidyverse)
-library(magrittr)
-library(dplyr)
-library(readr)
-library(lubridate)
-library(lazytrade)
+ library(dplyr)
+ library(readr)
+ library(lubridate)
+ library(lazytrade)
+ library(magrittr)
+
 
 #### Read asset prices and indicators ==========================================
 #absolute path with the data (choose either MT4 directory or a '_TEST_DATA' folder)
 
 path_terminal <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
-macd <- load_asset_data(path_terminal = path_terminal, trade_log_file = "AI_Macd", time_period = 60, data_deepth = "300")
-prices <- load_asset_data(path_terminal = path_terminal, trade_log_file = "AI_CP", time_period = 60, data_deepth = "300")
 
 path_data <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_DATA"
 # Vector of currency pairs
@@ -29,16 +27,18 @@ Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
 # Writing indicator and price change to the file
 for (PAIR in Pairs) {
   # PAIR <- "EURUSD"
-# performing data collection using the custom function
-aml_collect_data(price_dataset = prices,
-                 indicator_dataset = macd,
+# performing data collection
+ind = file.path(path_terminal, paste0("AI_RSIADX",PAIR,"60",".csv")) %>% read_csv(col_names = FALSE)
+ind$X1 <- ymd_hms(ind$X1)  
+  
+# data transformation using the custom function for one symbol
+aml_collect_data(indicator_dataset = ind,
                  symbol = PAIR,
-                 num_bars = 75,
                  timeframe = 60,
                  path_data = path_data)
   
- #full_path <- file.path(path_data, 'EURUSDM15X75.rds')
- #full_path <- file.path(path_data, 'GBPUSDM15X75.rds')  
+ #full_path <- file.path(path_data, 'AI_RSIADXEURUSD60.rds')
+   
  #x1 <- read_rds(full_path)
   
 }

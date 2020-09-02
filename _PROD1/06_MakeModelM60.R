@@ -5,12 +5,11 @@
 # https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
 #
 # load libraries to use and custom functions
-#library(tidyverse)
-library(magrittr)
 library(dplyr)
 library(readr)
 library(h2o)
 library(lazytrade)
+library(lubridate)
 
 #### Read asset prices and indicators ==========================================
 #absolute path with the data (choose either MT4 directory or a '_TEST_DATA' folder)
@@ -35,11 +34,12 @@ h2o.init()
 for (PAIR in Pairs) {
   ## PAIR <- "EURUSD"
  # performing Deep Learning Regression using the custom function
- aml_make_model(symbol = PAIR,
-                num_bars = 75,
-                timeframe = 60,
-                path_model = path_model,
-                path_data = path_data)
+# performing Deep Learning Regression using the custom function
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE)
 
 }  
   
@@ -54,7 +54,7 @@ time_total <- difftime(time_end,time_start,units="sec")
 as.double(time_total)
 
 # extract number of rows in the datasets
-x <- read_rds(file.path(path_data, "EURUSDM60X75.rds"))
+x <- read_rds(file.path(path_data, "AI_RSIADXEURUSD60.rds"))
 n_rows_x <- nrow(x)
 
 #setup a log dataframe

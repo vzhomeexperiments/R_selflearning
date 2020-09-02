@@ -36,7 +36,6 @@ for (PAIR in Pairs) {
   ## PAIR <- "EURUSD"
  # performing Deep Learning Regression using the custom function
  aml_make_model(symbol = PAIR,
-                num_bars = 75,
                 timeframe = 60,
                 path_model = path_model,
                 path_data = path_data,
@@ -55,7 +54,7 @@ time_total <- difftime(time_end,time_start,units="sec")
 as.double(time_total)
 
 # extract number of rows in the datasets
-x <- read_rds(file.path(path_data, "EURUSDM60X75.rds"))
+x <- read_rds(file.path(path_data, "AI_RSIADXEURUSD60.rds"))
 n_rows_x <- nrow(x)
 
 #setup a log dataframe
@@ -71,6 +70,6 @@ if(!file.exists(file.path(path_logs, 'time_executeM60.rds'))){
 }
 
 # outcome are the models files for each currency pair written to the folder /_MODELS
+
 #set delay to insure h2o unit closes properly
 Sys.sleep(5)
-
