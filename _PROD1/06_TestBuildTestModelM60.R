@@ -25,21 +25,55 @@ path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS
 #path to store logs data (e.g. duration of machine learning steps)
 path_logs <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_LOGS"
 
+path_sbxm <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
+path_sbxs <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
+
 #record time when the script starts to run
 time_start <- Sys.time()
 
 h2o.init()
 
-# Writing indicator and price change to the file
+# Performing Testing => Building -> Testing...
 for (PAIR in Pairs) {
   ## PAIR <- "EURUSD"
- # performing Deep Learning Regression using the custom function
-# performing Deep Learning Regression using the custom function
+
+# repeat testing and training several times  
+
+  aml_test_model(symbol = PAIR,
+                 num_bars = 600,
+                 timeframe = 60,
+                 path_model = path_model,
+                 path_data = path_data,
+                 path_sbxm = path_sbxm,
+                 path_sbxs = path_sbxs)  
+  
 aml_make_model(symbol = PAIR,
                timeframe = 60,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
+
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
 
 }  
   
@@ -58,7 +92,7 @@ x <- read_rds(file.path(path_data, "AI_RSIADXEURUSD60.rds"))
 n_rows_x <- nrow(x)
 
 #setup a log dataframe
-logs <- data.frame(time2run = time_total, nrows = n_rows_x)
+logs <- data.frame(dtm = Sys.time(), time2run = time_total, nrows = n_rows_x)
 
 #read existing log (if exists) and add there a new log data
 if(!file.exists(file.path(path_logs, 'time_executeM60.rds'))){

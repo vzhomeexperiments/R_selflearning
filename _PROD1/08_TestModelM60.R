@@ -39,7 +39,9 @@ for (PAIR in Pairs) {
                 num_bars = 600,
                 timeframe = 60,
                 path_model = path_model,
-                path_data = path_data)
+                path_data = path_data,
+                path_sbxm = path_sbxm,
+                path_sbxs = path_sbxs)
 
 }
 

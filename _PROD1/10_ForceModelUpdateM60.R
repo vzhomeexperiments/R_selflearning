@@ -58,7 +58,7 @@ x <- read_rds(file.path(path_data, "AI_RSIADXEURUSD60.rds"))
 n_rows_x <- nrow(x)
 
 #setup a log dataframe
-logs <- data.frame(time2run = time_total, nrows = n_rows_x)
+logs <- data.frame(dtm = Sys.time(), time2run = time_total, nrows = n_rows_x)
 
 #read existing log (if exists) and add there a new log data
 if(!file.exists(file.path(path_logs, 'time_executeM60.rds'))){
