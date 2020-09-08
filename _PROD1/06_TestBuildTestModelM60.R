@@ -9,6 +9,7 @@ library(dplyr)
 library(readr)
 library(h2o)
 library(lazytrade)
+library(magrittr)
 library(lubridate)
 
 #### Read asset prices and indicators ==========================================
