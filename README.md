@@ -2,9 +2,9 @@
 
 Repository for the Udemy course. Please support this project by joining this on-line course:
 
-https://www.udemy.com/self-learning-trading-robot/?couponCode=SELF-LEARN-BOT
+https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 
-Note: this course is the part of the series of step-by-step tutorials allowing to build more comprehensive Automated Trading System based on Decision Support System approach. Check out other courses of the series. Contact the author for questions.
+Note: this course is the part of the series of step-by-step tutorials allowing to build more comprehensive Automated Trading System based on Decision Support System approach. Check out other courses of the series. 
 
 ## Goal
 
@@ -26,22 +26,23 @@ The *third* approach will use combination of the classic 'rule-based' system and
 
 ## Main Features
 
-Repository contains functions and scripts capable to:
+Repository contains scripts capable to:
 
-* import financial data: (price levels and indicator)
+* collect financial data: (prices and indicators)
 * transform data for modelling
 * perform deep learning
 * test deep learning model
 * use model and fresh data to generate new predictions
 
-Particularity of this project is that data and modelling is coming from 28 forex currency pairs. Data used for modelling is then multiplied to increase dataset.
+Particularity of this project is that data and modelling is coming from 28 forex currency pairs. Data used for modelling is being collected to increase dataset. 
 
 ## Advantages
 
 More efficient trading generation tool:
 
-* Both reduced time and energy spent to perform modelling and test.
-* Fully automated execution.
+* Both reduced time and energy spent to perform modelling and test,
+* Fully automated learning and testing,
+* Model hyperparameter tuning using testing objective
 
 ## Challenges
 
@@ -51,3 +52,7 @@ Trading decisions are moved to the separate *Decision Support System* fully code
 * Required to do backtest of the strategy
 * Non instant communication with MT4 due to usage of simplified file-based interface
 * Black box system
+
+## Disclaimer
+
+Use on your own risk

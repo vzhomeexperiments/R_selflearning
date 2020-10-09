@@ -1,3 +1,0 @@
-ExpectedPnL,AchievedPnL,TotalTrades,TPSL_Level,FinalOutcome,FinalQuality,new_or_old,num_bars,timeframe,model_type
-19230,13667.400000000012,872,10,VeryGood,0.7107332256332132,NEW,75,1,R
-20224,14341.000000000025,1008,10,VeryGood,0.7091079870000606,PREV,75,1,R
