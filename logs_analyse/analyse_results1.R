@@ -23,7 +23,8 @@ for (VAR in filesToAnalyse) {
 # visualized
 ggplot(dfres, aes(x = NB_hold, y = PnL_NB,
               #size = TotalTrades, 
-              col = as.factor(Symbol)))+geom_point()
+              col = as.factor(Symbol)))+geom_point()+
+  ggtitle("Strategy Test results")
 
 
 ## Analysis of model quality records
@@ -46,4 +47,5 @@ ggplot(dfres1, aes(x = MaxPerf, y = Symbol,
                   col = TR_Level, 
                   size = NB_hold))+geom_point()+
                   geom_vline(xintercept=0.001)+ 
-                  scale_x_continuous(trans='log10')
+                  scale_x_continuous(trans='log10')+
+  ggtitle("Model Performance", "x axis at log 10 scale")
