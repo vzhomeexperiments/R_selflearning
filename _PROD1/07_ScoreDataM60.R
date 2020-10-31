@@ -1,8 +1,8 @@
 # ----------------------------------------------------------------------------------------
 # R Script to score the latest asset indicator data against Deep Learning model
 # ----------------------------------------------------------------------------------------
-# (C) 2019 Vladimir Zhbanko
-# https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
+# (C) 2019, 2020 Vladimir Zhbanko
+# https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 #
 # load libraries to use and custom functions
 library(dplyr)

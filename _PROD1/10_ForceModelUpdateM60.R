@@ -2,10 +2,9 @@
 # R Script to build or update Deep Learning model for every Currency Pair
 # ----------------------------------------------------------------------------------------
 # (C) 2019 Vladimir Zhbanko
-# https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
+# https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 #
 # load libraries to use and custom functions
-#library(tidyverse)
 library(dplyr)
 library(magrittr)
 library(readr)

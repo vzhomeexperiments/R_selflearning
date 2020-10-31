@@ -2,7 +2,7 @@
 # R Script to collect (aggregate) the asset indicator data and respective prices
 # ----------------------------------------------------------------------------------------
 # (C) 2020 Vladimir Zhbanko
-# https://www.udemy.com/self-learning-trading-robot/?couponCode=LAZYTRADE7-10
+# https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 #
 # load libraries to use and custom functions
  library(dplyr)
@@ -13,12 +13,17 @@
 
 
 #### Read asset prices and indicators ==========================================
-#absolute path with the data (choose either MT4 directory or a '_TEST_DATA' folder)
-
+#absolute path with the data (choose MT4 directory where files are generated)
 path_terminal <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
 
-path_data <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_DATA"
-# Vector of currency pairs
+#path to user repo:
+#!!!Change this path!!! 
+path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+
+#path with the data
+path_data <- file.path(path_user, "_DATA")
+
+# Vector of currency pairs used
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
           "EURGBP", "EURJPY", "EURCHF", "EURNZD", "EURCAD", "EURAUD", "GBPAUD",
           "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "AUDCAD", "AUDCHF", "AUDJPY",
