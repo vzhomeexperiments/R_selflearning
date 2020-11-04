@@ -12,14 +12,19 @@ library(h2o)
 library(magrittr)
 library(lazytrade)
 
+#path to user repo:
+#!!!Change this path!!! 
+path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+
 #### definition of paths and variables ==========================================
 path_data <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
+
 #absolute path to store model objects (useful when scheduling tasks)
-path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS"
+path_model <- file.path(path_user, "_MODELS")
+
 # load prices of 28 currencies
 path_sbxm <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
 path_sbxs <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
-
 
 # Vector of currency pairs
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",

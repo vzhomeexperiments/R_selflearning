@@ -11,19 +11,24 @@ library(readr)
 library(h2o)
 library(lazytrade)
 
+#path to user repo:
+#!!!Change this path!!! 
+path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+
 #### Read asset prices and indicators ==========================================
-#absolute path with the data (choose either MT4 directory or a '_TEST_DATA' folder)
-path_data <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_DATA"
+#absolute path with the data
+path_data <- file.path(path_user, "_DATA")
 # Vector of currency pairs
+
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
           "EURGBP", "EURJPY", "EURCHF", "EURNZD", "EURCAD", "EURAUD", "GBPAUD",
           "GBPCAD", "GBPCHF", "GBPJPY", "GBPNZD", "AUDCAD", "AUDCHF", "AUDJPY",
           "AUDNZD", "CADJPY", "CHFJPY", "NZDJPY", "NZDCAD", "NZDCHF", "CADCHF")  
 #absolute path to store model objects (useful when scheduling tasks)
-path_model <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS"
+path_model <- file.path(path_user, "_MODELS")
 
 #path to store logs data (e.g. duration of machine learning steps)
-path_logs <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_LOGS"
+path_logs <- file.path(path_user, "_LOGS")
 
 #record time when the script starts to run
 time_start <- Sys.time()

@@ -4,8 +4,14 @@ library(ggplot2)
 library(magrittr)
 
 ## read files with predicted price changes
-# path
-path_logs <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning/_MODELS"
+
+#path to user repo:
+#!!!Change this path!!! 
+path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+
+#path to store logs data (e.g. duration of machine learning steps)
+path_logs <- file.path(path_user, "_MODELS")
+
 # file names
 filesToAnalyse <-list.files(path = path_logs,
                             pattern = "StrTestFull--",
