@@ -53,5 +53,7 @@ ggplot(dfres1, aes(x = MaxPerf, y = Symbol,
                   col = TR_Level, 
                   size = NB_hold))+geom_point()+
                   geom_vline(xintercept=0.001)+ 
-                  scale_x_continuous(trans='log10')+
-  ggtitle("Model Performance", "x axis at log 10 scale")
+                  scale_x_continuous()+
+  ggtitle("Model Performance")
+                  #scale_x_continuous(trans='log10')+
+  #ggtitle("Model Performance", "x axis at log 10 scale")

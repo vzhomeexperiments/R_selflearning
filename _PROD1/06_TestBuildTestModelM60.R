@@ -59,7 +59,8 @@ aml_make_model(symbol = PAIR,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE,
-               num_nn_options = 20)
+               num_nn_options = 20,
+               min_perf = 100)
 
 aml_test_model(symbol = PAIR,
                num_bars = 600,
@@ -74,7 +75,24 @@ aml_make_model(symbol = PAIR,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE,
-               num_nn_options = 20)
+               num_nn_options = 20,
+               min_perf = 10)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
+
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE,
+               num_nn_options = 20,
+               min_perf = 1)
 
 aml_test_model(symbol = PAIR,
                num_bars = 600,
