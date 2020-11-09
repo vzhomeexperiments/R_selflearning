@@ -35,6 +35,11 @@ path_logs <- file.path(path_user, "_LOGS")
 path_sbxm <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
 path_sbxs <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
 
+#copy file with tick size info
+file.copy(from = file.path("C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files", "TickSize_AI_RSIADX.csv"),
+          to = file.path(path_data, "TickSize_AI_RSIADX.csv"),
+          overwrite = TRUE)
+
 #record time when the script starts to run
 time_start <- Sys.time()
 
@@ -60,39 +65,39 @@ aml_make_model(symbol = PAIR,
                path_data = path_data,
                force_update=FALSE,
                num_nn_options = 20,
+               min_perf = 10000)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
+
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE,
+               num_nn_options = 20,
+               min_perf = 1000)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
+
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE,
+               num_nn_options = 20,
                min_perf = 100)
-
-aml_test_model(symbol = PAIR,
-               num_bars = 600,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               path_sbxm = path_sbxm,
-               path_sbxs = path_sbxs)  
-
-aml_make_model(symbol = PAIR,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               force_update=FALSE,
-               num_nn_options = 20,
-               min_perf = 10)
-
-aml_test_model(symbol = PAIR,
-               num_bars = 600,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               path_sbxm = path_sbxm,
-               path_sbxs = path_sbxs)  
-
-aml_make_model(symbol = PAIR,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               force_update=FALSE,
-               num_nn_options = 20,
-               min_perf = 1)
 
 aml_test_model(symbol = PAIR,
                num_bars = 600,
