@@ -64,40 +64,40 @@ aml_make_model(symbol = PAIR,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE,
-               num_nn_options = 20,
+               num_nn_options = 24,
+               min_perf = 100000)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
+
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE,
+               num_nn_options = 24,
+               min_perf = 50000)
+
+aml_test_model(symbol = PAIR,
+               num_bars = 600,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               path_sbxm = path_sbxm,
+               path_sbxs = path_sbxs)  
+
+aml_make_model(symbol = PAIR,
+               timeframe = 60,
+               path_model = path_model,
+               path_data = path_data,
+               force_update=FALSE,
+               num_nn_options = 24,
                min_perf = 10000)
-
-aml_test_model(symbol = PAIR,
-               num_bars = 600,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               path_sbxm = path_sbxm,
-               path_sbxs = path_sbxs)  
-
-aml_make_model(symbol = PAIR,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               force_update=FALSE,
-               num_nn_options = 20,
-               min_perf = 1000)
-
-aml_test_model(symbol = PAIR,
-               num_bars = 600,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               path_sbxm = path_sbxm,
-               path_sbxs = path_sbxs)  
-
-aml_make_model(symbol = PAIR,
-               timeframe = 60,
-               path_model = path_model,
-               path_data = path_data,
-               force_update=FALSE,
-               num_nn_options = 20,
-               min_perf = 100)
 
 aml_test_model(symbol = PAIR,
                num_bars = 600,
@@ -136,6 +136,51 @@ if(!file.exists(file.path(path_logs, 'time_executeM60.rds'))){
 }
 
 # outcome are the models files for each currency pair written to the folder /_MODELS
+
+## ================
+# analyse StrTestFiles to automatically define min model quality value 
+## Analysis of model quality records
+# file names
+filesToAnalyse1 <-list.files(path = path_model,
+                             pattern = "StrTest-",
+                             full.names=TRUE)
+
+
+# aggregate all files into one
+for (VAR in filesToAnalyse1) {
+  # VAR <- filesToAnalyse1[1]
+  if(!exists("dfres1")){dfres1 <- readr::read_csv(VAR)}  else {
+    dfres1 <- readr::read_csv(VAR) %>% dplyr::bind_rows(dfres1)
+  }
+  
+}
+
+# find the 1st quantile by sampling 25% of the data see ?quantile
+df <- dfres1 %>% 
+  dplyr::mutate(qrtl = quantile(MaxPerf, 0.25)) %>% 
+  head(1) %$% qrtl %>% as_tibble() %>% rename(FrstQntlPerf = value)
+  
+
+# write the value of the 1st quantile into all files
+timeframe <- 60
+# 
+for (VAR in filesToAnalyse1) {
+  # VAR <- filesToAnalyse1[1]
+  readr::read_csv(VAR) %>% dplyr::bind_cols(df) %>% readr::write_csv(VAR)
+  }
+
+# also move these files to sandboxes of the trading terminals
+for (PAIR in Pairs) {
+  #PAIR <- 'EURUSD'
+  #timeframe <- 60
+  file.copy(from = file.path(path_model, paste0('StrTest-', PAIR,"M",timeframe, ".csv")),
+            to = file.path(path_sbxm, paste0('StrTest-', PAIR,"M",timeframe, ".csv")),
+            overwrite = TRUE)
+  
+  file.copy(from = file.path(path_model, paste0('StrTest-', PAIR,"M",timeframe, ".csv")),
+            to = file.path(path_sbxs, paste0('StrTest-', PAIR,"M",timeframe, ".csv")),
+            overwrite = TRUE)
+}
 
 #set delay to insure h2o unit closes properly
 Sys.sleep(5)
