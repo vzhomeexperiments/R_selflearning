@@ -14,11 +14,13 @@
 
 #### Read asset prices and indicators ==========================================
 #absolute path with the data (choose MT4 directory where files are generated)
-path_terminal <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
+#!!!Setup Environmental Variables!!! 
+path_terminal <- normalizePath(Sys.getenv('PATH_T2'), winslash = '/')
 
 #path to user repo:
-#!!!Change this path!!! 
-path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+#!!!Setup Environmental Variables!!! 
+path_user <- normalizePath(Sys.getenv('PATH_DSS_Repo'), winslash = '/')
+path_user <- file.path(path_user, "R_selflearning")
 
 #path with the data
 path_data <- file.path(path_user, "_DATA")

@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------------------
 # R Script to build or update Deep Learning model for every Currency Pair
 # ----------------------------------------------------------------------------------------
-# (C) 2019 Vladimir Zhbanko
+# (C) 2019, 2021 Vladimir Zhbanko
 # https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 #
 # load libraries to use and custom functions
@@ -12,8 +12,9 @@ library(h2o)
 library(lazytrade)
 
 #path to user repo:
-#!!!Change this path!!! 
-path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+#!!!Setup Environmental Variables!!! 
+path_user <- normalizePath(Sys.getenv('PATH_DSS_Repo'), winslash = '/')
+path_user <- file.path(path_user, "R_selflearning")
 
 #### Read asset prices and indicators ==========================================
 #absolute path with the data
@@ -43,7 +44,8 @@ for (PAIR in Pairs) {
                 timeframe = 60,
                 path_model = path_model,
                 path_data = path_data,
-                force_update = TRUE)
+                force_update = TRUE,
+                num_nn_options = 3)
 
 }  
   

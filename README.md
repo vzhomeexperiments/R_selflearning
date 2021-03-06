@@ -6,6 +6,16 @@ https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127B
 
 Note: this course is the part of the series of step-by-step tutorials allowing to build more comprehensive Automated Trading System based on Decision Support System approach. Check out other courses of the series. 
 
+# Synchronize or Deploy
+
+## Setup Environmental Variables
+
+Add these User Environmental Variables:
+
+PATH_T2 - path to Development Terminal MT4, folder *\MQL4\Files
+PATH_T1, PATH_T3, etc - paths to the Terminals where all other terminals are located
+PATH_DSS_Repo - path to the folder where this repository is stored on the local computer
+
 ## Goal
 
 Create model-based self-testing artificially intelligent trading system.
@@ -52,6 +62,12 @@ Trading decisions are moved to the separate *Decision Support System* fully code
 * Required to do backtest of the strategy
 * Non instant communication with MT4 due to usage of simplified file-based interface
 * Black box system
+
+## Courious how to apply?
+
+This content is a result of a lot of dedication and time.
+Please support this project by joining these courses using referral links published
+here: https://vladdsm.github.io/myblog_attempt/topics/topics-my-promotions.html
 
 ## Disclaimer
 

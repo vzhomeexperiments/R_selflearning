@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------------------
 # R Script to score the latest asset indicator data against Deep Learning model
 # ----------------------------------------------------------------------------------------
-# (C) 2019, 2020 Vladimir Zhbanko
+# (C) 2019, 2021 Vladimir Zhbanko
 # https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 #
 # load libraries to use and custom functions
@@ -13,18 +13,21 @@ library(magrittr)
 library(lazytrade)
 
 #path to user repo:
-#!!!Change this path!!! 
-path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+#!!!Setup Environmental Variables!!! 
+path_user <- normalizePath(Sys.getenv('PATH_DSS_Repo'), winslash = '/')
+path_user <- file.path(path_user, "R_selflearning")
 
 #### definition of paths and variables ==========================================
-path_data <- "C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files/"
+path_data <- normalizePath(Sys.getenv('PATH_T2'), winslash = '/')
 
 #absolute path to store model objects (useful when scheduling tasks)
 path_model <- file.path(path_user, "_MODELS")
 
 # load prices of 28 currencies
-path_sbxm <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
-path_sbxs <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
+path_sbxm <- normalizePath(Sys.getenv('PATH_T1'), winslash = '/')
+
+path_sbxs <- normalizePath(Sys.getenv('PATH_T3'), winslash = '/')
+
 
 # Vector of currency pairs
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",

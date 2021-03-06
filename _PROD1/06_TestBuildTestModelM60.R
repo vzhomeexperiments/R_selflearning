@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------------------
 # R Script to build or update Deep Learning model for every Currency Pair
 # ----------------------------------------------------------------------------------------
-# (C) 2019,2020 Vladimir Zhbanko
+# (C) 2019,2021 Vladimir Zhbanko
 # https://www.udemy.com/course/self-learning-trading-robot/?referralCode=B95FC127BA32DA5298F4
 #
 # load libraries to use and custom functions
@@ -13,8 +13,9 @@ library(magrittr)
 library(lubridate)
 
 #path to user repo:
-#!!!Change this path!!! 
-path_user <- "C:/Users/fxtrams/Documents/000_TradingRepo/R_selflearning"
+#!!!Setup Environmental Variables!!! 
+path_user <- normalizePath(Sys.getenv('PATH_DSS_Repo'), winslash = '/')
+path_user <- file.path(path_user, "R_selflearning")
 
 #### Read asset prices and indicators ==========================================
 
@@ -32,11 +33,12 @@ path_model <- file.path(path_user, "_MODELS")
 #path to store logs data (e.g. duration of machine learning steps)
 path_logs <- file.path(path_user, "_LOGS")
 
-path_sbxm <- "C:/Program Files (x86)/FxPro - Terminal1/MQL4/Files"
-path_sbxs <- "C:/Program Files (x86)/FxPro - Terminal3/MQL4/Files"
+path_sbxm <- normalizePath(Sys.getenv('PATH_T1'), winslash = '/')
+path_sbx <- normalizePath(Sys.getenv('PATH_T2'), winslash = '/')
+path_sbxs <- normalizePath(Sys.getenv('PATH_T3'), winslash = '/')
 
 #copy file with tick size info
-file.copy(from = file.path("C:/Program Files (x86)/FxPro - Terminal2/MQL4/Files", "TickSize_AI_RSIADX.csv"),
+file.copy(from = file.path(path_sbx, "TickSize_AI_RSIADX.csv"),
           to = file.path(path_data, "TickSize_AI_RSIADX.csv"),
           overwrite = TRUE)
 
