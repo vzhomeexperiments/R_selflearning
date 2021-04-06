@@ -19,6 +19,8 @@ path_user <- file.path(path_user, "R_selflearning")
 #### Read asset prices and indicators ==========================================
 #absolute path with the data
 path_data <- file.path(path_user, "_DATA")
+#create directory if not exists
+if(!dir.exists(path_data)){dir.create(path_data)}
 # Vector of currency pairs
 
 Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
@@ -27,9 +29,13 @@ Pairs = c("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "USDJPY",
           "AUDNZD", "CADJPY", "CHFJPY", "NZDJPY", "NZDCAD", "NZDCHF", "CADCHF")  
 #absolute path to store model objects (useful when scheduling tasks)
 path_model <- file.path(path_user, "_MODELS")
+#create directory if not exists
+if(!dir.exists(path_model)){dir.create(path_model)}
 
 #path to store logs data (e.g. duration of machine learning steps)
 path_logs <- file.path(path_user, "_LOGS")
+#create directory if not exists
+if(!dir.exists(path_logs)){dir.create(path_logs)}
 
 #record time when the script starts to run
 time_start <- Sys.time()
