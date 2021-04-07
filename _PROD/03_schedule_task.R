@@ -25,7 +25,7 @@ password <- secret::get_secret("pwrd",
                                vault = file.path(who_user, "vault"))
 usr <- secret::get_secret("user",
                           key = file.path(path_keys, 'id_rsa'),
-                          vault = file.path(path_user, "vault"))
+                          vault = file.path(who_user, "vault"))
 ## don't like to bother with security?
 # usr <- ""
 # password <- ""

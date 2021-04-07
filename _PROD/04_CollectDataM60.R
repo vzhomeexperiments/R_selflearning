@@ -17,7 +17,7 @@
 # https://github.com/vzhomeexperiments/DataWriter/blob/master/DataWriter_v6.01.mq4
 #absolute path with the data (choose MT4 directory where files are generated)
 #!!!Setup Environmental Variables!!! 
-path_terminal <- normalizePath(Sys.getenv('PATH_T2'), winslash = '/')
+path_terminal <- normalizePath(Sys.getenv('PATH_T1'), winslash = '/')
 
 #path to user repo:
 #!!!Setup Environmental Variables!!! 

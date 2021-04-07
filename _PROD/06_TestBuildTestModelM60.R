@@ -34,11 +34,10 @@ path_model <- file.path(path_user, "_MODELS")
 path_logs <- file.path(path_user, "_LOGS")
 
 path_sbxm <- normalizePath(Sys.getenv('PATH_T1'), winslash = '/')
-path_sbx <- normalizePath(Sys.getenv('PATH_T2'), winslash = '/')
 path_sbxs <- normalizePath(Sys.getenv('PATH_T3'), winslash = '/')
 
 #copy file with tick size info
-file.copy(from = file.path(path_sbx, "TickSize_AI_RSIADX.csv"),
+file.copy(from = file.path(path_sbxm, "TickSize_AI_RSIADX.csv"),
           to = file.path(path_data, "TickSize_AI_RSIADX.csv"),
           overwrite = TRUE)
 
@@ -66,7 +65,12 @@ aml_make_model(symbol = PAIR,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE,
+               objective_test = TRUE,
+               num_epoch = 100,
                num_nn_options = 24,
+               num_bars_test = 600,
+               num_bars_ahead = 34,
+               num_cols_used = 16,
                min_perf = 100000)
 
 aml_test_model(symbol = PAIR,
@@ -82,7 +86,12 @@ aml_make_model(symbol = PAIR,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE,
+               objective_test = TRUE,
+               num_epoch = 100,
                num_nn_options = 24,
+               num_bars_test = 600,
+               num_bars_ahead = 34,
+               num_cols_used = 16,
                min_perf = 50000)
 
 aml_test_model(symbol = PAIR,
@@ -98,7 +107,12 @@ aml_make_model(symbol = PAIR,
                path_model = path_model,
                path_data = path_data,
                force_update=FALSE,
+               objective_test = TRUE,
+               num_epoch = 100,
                num_nn_options = 24,
+               num_bars_test = 600,
+               num_bars_ahead = 34,
+               num_cols_used = 16,
                min_perf = 10000)
 
 aml_test_model(symbol = PAIR,

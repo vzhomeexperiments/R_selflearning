@@ -37,6 +37,14 @@ path_logs <- file.path(path_user, "_LOGS")
 #create directory if not exists
 if(!dir.exists(path_logs)){dir.create(path_logs)}
 
+path_sbx <- normalizePath(Sys.getenv('PATH_T1'), winslash = '/')
+
+#copy file with tick size info
+file.copy(from = file.path(path_sbx, "TickSize_AI_RSIADX.csv"),
+          to = file.path(path_data, "TickSize_AI_RSIADX.csv"),
+          overwrite = TRUE)
+
+
 #record time when the script starts to run
 time_start <- Sys.time()
 
@@ -46,12 +54,25 @@ h2o.init()
 for (PAIR in Pairs) {
   ## PAIR <- "EURUSD"
  # performing Deep Learning Regression using the custom function
- aml_make_model(symbol = PAIR,
-                timeframe = 60,
-                path_model = path_model,
-                path_data = path_data,
-                force_update = TRUE,
-                num_nn_options = 3)
+ # aml_make_model(symbol = PAIR,
+ #                timeframe = 60,
+ #                path_model = path_model,
+ #                path_data = path_data,
+ #                force_update = TRUE,
+ #                num_nn_options = 3)
+  
+  aml_make_model(symbol = PAIR,
+                 timeframe = 60,
+                 path_model = path_model,
+                 path_data = path_data,
+                 force_update = TRUE,
+                 objective_test = TRUE,
+                 num_epoch = 100,
+                 num_nn_options = 24,
+                 num_bars_test = 600,
+                 num_bars_ahead = 34,
+                 num_cols_used = 16,
+                 min_perf = 0)  
 
 }  
   

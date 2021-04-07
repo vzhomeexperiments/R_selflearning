@@ -32,3 +32,4 @@ model/LOG/AI_T-60.csv
 _DATA/
 _MODELS/
 _SETUP/
+*.log
